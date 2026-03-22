@@ -529,13 +529,12 @@ export class Room {
     this.scene.add(plantTop);
   }
 
-  // ── Area Rug (large) ────────────────────────────────────
+  // ── Area Rug (large centered) ──────────────────────────────
 
   _buildRug() {
-    // Main rug under sofa area
-    const rugGeo = new THREE.PlaneGeometry(80, 50, 30, 18);
+    const rugGeo = new THREE.PlaneGeometry(160, 100, 50, 30);
     const rugMat = new THREE.MeshLambertMaterial({
-      color: 0x9c8b6e,
+      color: 0xb8956a,
       vertexColors: true,
       polygonOffset: true,
       polygonOffsetFactor: -1,
@@ -543,54 +542,42 @@ export class Room {
     this._addRugPattern(rugGeo);
     const rug = new THREE.Mesh(rugGeo, rugMat);
     rug.rotation.x = -Math.PI / 2;
-    rug.position.set(-100, FLOOR_Y + 0.05, 35);
+    rug.position.set(-30, FLOOR_Y + 0.05, 30);
     this.scene.add(rug);
-
-    // Secondary rug under tank
-    const rug2Geo = new THREE.PlaneGeometry(70, 35, 24, 12);
-    const rug2Mat = new THREE.MeshLambertMaterial({
-      color: 0x7a6b5a,
-      vertexColors: true,
-      polygonOffset: true,
-      polygonOffsetFactor: -1,
-    });
-    this._addRugPattern2(rug2Geo);
-    const rug2 = new THREE.Mesh(rug2Geo, rug2Mat);
-    rug2.rotation.x = -Math.PI / 2;
-    rug2.position.set(0, FLOOR_Y + 0.05, 12);
-    this.scene.add(rug2);
   }
 
   _addRugPattern(geo) {
     const pos = geo.attributes.position;
     const count = pos.count;
     const colors = new Float32Array(count * 3);
+    const halfW = 80, halfH = 50;
     for (let i = 0; i < count; i++) {
       const px = pos.getX(i);
       const py = pos.getY(i);
-      const edgeX = Math.abs(px) > 36 ? -0.08 : 0;
-      const edgeY = Math.abs(py) > 21 ? -0.08 : 0;
-      const pattern = (Math.floor(px / 6) + Math.floor(py / 6)) % 2 === 0 ? 0.03 : 0;
-      const v = 0.58 + edgeX + edgeY + pattern + Math.random() * 0.02;
-      colors[i * 3]     = v + 0.02;
-      colors[i * 3 + 1] = v * 0.90;
-      colors[i * 3 + 2] = v * 0.65;
-    }
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  }
 
-  _addRugPattern2(geo) {
-    const pos = geo.attributes.position;
-    const count = pos.count;
-    const colors = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const px = pos.getX(i);
-      const py = pos.getY(i);
-      const border = (Math.abs(px) > 32 || Math.abs(py) > 15) ? -0.06 : 0;
-      const v = 0.50 + border + Math.random() * 0.03;
-      colors[i * 3]     = v + 0.03;
-      colors[i * 3 + 1] = v * 0.88;
-      colors[i * 3 + 2] = v * 0.62;
+      const dx = halfW - Math.abs(px);
+      const dy = halfH - Math.abs(py);
+      const edgeDist = Math.min(dx, dy);
+
+      let r, g, b;
+      if (edgeDist < 5) {
+        r = 0.55; g = 0.42; b = 0.29;
+      } else if (edgeDist < 10) {
+        r = 0.61; g = 0.33; b = 0.25;
+      } else {
+        const pat = (Math.floor(px / 8) + Math.floor(py / 8)) % 3;
+        if (pat === 0) {
+          r = 0.72; g = 0.58; b = 0.42;
+        } else if (pat === 1) {
+          r = 0.65; g = 0.52; b = 0.38;
+        } else {
+          r = 0.34; g = 0.47; b = 0.67;
+        }
+      }
+      const noise = Math.random() * 0.03;
+      colors[i * 3]     = r + noise;
+      colors[i * 3 + 1] = g + noise;
+      colors[i * 3 + 2] = b + noise;
     }
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   }
