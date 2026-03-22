@@ -476,8 +476,8 @@ export class Room {
   // ── Coffee Table ────────────────────────────────────────
 
   _buildCoffeeTable() {
-    const ctX = -100;
-    const ctZ = 50;
+    const ctX = -40;
+    const ctZ = 35;
     const legH = 4;
 
     // Table top (wood)
@@ -507,6 +507,26 @@ export class Room {
       book.rotation.y = 0.1 * (i - 1);
       this.scene.add(book);
     }
+
+    // TV remote on table
+    const remoteMat = new THREE.MeshLambertMaterial({ color: 0x222222 });
+    const remoteGeo = new THREE.BoxGeometry(4, 0.3, 1.5);
+    const remote = new THREE.Mesh(remoteGeo, remoteMat);
+    remote.position.set(ctX - 5, FLOOR_Y + legH + 1.35, ctZ + 3);
+    remote.rotation.y = 0.3;
+    this.scene.add(remote);
+
+    // Small potted plant on table corner
+    const potMat = new THREE.MeshLambertMaterial({ color: 0xb85c38 });
+    const pot = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), potMat);
+    pot.position.set(ctX - 10, FLOOR_Y + legH + 2.2, ctZ - 3);
+    this.scene.add(pot);
+    const plantTop = new THREE.Mesh(
+      new THREE.BoxGeometry(3, 2, 3),
+      new THREE.MeshLambertMaterial({ color: 0x2d8b2d })
+    );
+    plantTop.position.set(ctX - 10, FLOOR_Y + legH + 3.7, ctZ - 3);
+    this.scene.add(plantTop);
   }
 
   // ── Area Rug (large) ────────────────────────────────────
