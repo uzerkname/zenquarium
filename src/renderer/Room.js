@@ -241,25 +241,21 @@ export class Room {
     const fwWinCenterX = -50;
     const fwWinCenterY = FLOOR_Y + 27.5;
     // Top bar
-    this.scene.add(Object.assign(
-      new THREE.Mesh(new THREE.BoxGeometry(202, 1, 1), fwFrameMat),
-      { position: new THREE.Vector3(fwWinCenterX, FLOOR_Y + 40.5, frontWallZ - 0.3) }
-    ));
+    const fwFTop = new THREE.Mesh(new THREE.BoxGeometry(202, 1, 1), fwFrameMat);
+    fwFTop.position.set(fwWinCenterX, FLOOR_Y + 40.5, frontWallZ - 0.3);
+    this.scene.add(fwFTop);
     // Bottom bar
-    this.scene.add(Object.assign(
-      new THREE.Mesh(new THREE.BoxGeometry(202, 1, 1), fwFrameMat.clone()),
-      { position: new THREE.Vector3(fwWinCenterX, FLOOR_Y + 14.5, frontWallZ - 0.3) }
-    ));
+    const fwFBot = new THREE.Mesh(new THREE.BoxGeometry(202, 1, 1), fwFrameMat.clone());
+    fwFBot.position.set(fwWinCenterX, FLOOR_Y + 14.5, frontWallZ - 0.3);
+    this.scene.add(fwFBot);
     // Left bar
-    this.scene.add(Object.assign(
-      new THREE.Mesh(new THREE.BoxGeometry(1, 27, 1), fwFrameMat.clone()),
-      { position: new THREE.Vector3(-151, fwWinCenterY, frontWallZ - 0.3) }
-    ));
+    const fwFLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 27, 1), fwFrameMat.clone());
+    fwFLeft.position.set(-151, fwWinCenterY, frontWallZ - 0.3);
+    this.scene.add(fwFLeft);
     // Right bar
-    this.scene.add(Object.assign(
-      new THREE.Mesh(new THREE.BoxGeometry(1, 27, 1), fwFrameMat.clone()),
-      { position: new THREE.Vector3(51, fwWinCenterY, frontWallZ - 0.3) }
-    ));
+    const fwFRight = new THREE.Mesh(new THREE.BoxGeometry(1, 27, 1), fwFrameMat.clone());
+    fwFRight.position.set(51, fwWinCenterY, frontWallZ - 0.3);
+    this.scene.add(fwFRight);
 
     // Sky backdrop behind front window
     const fwSky = new THREE.Mesh(
