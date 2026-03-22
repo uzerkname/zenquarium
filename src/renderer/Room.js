@@ -42,7 +42,6 @@ export class Room {
     this._buildFloorPlants();
     this._buildFloorLamp();
     this._buildSideTable();
-    this._buildBookshelf();
     this._buildDoor();
     this._buildCat();
     this._buildLightswitch();
@@ -759,7 +758,7 @@ export class Room {
     ];
     const p3 = buildVoxelGroup(snakePlantVoxels);
     p3.scale.setScalar(1.4);
-    p3.position.set(-140, FLOOR_Y, -20);
+    p3.position.set(120, FLOOR_Y, -20);
     this.scene.add(p3);
 
     // Small potted plant — near bookshelf
@@ -773,7 +772,7 @@ export class Room {
     ];
     const p4 = buildVoxelGroup(smallPlantVoxels);
     p4.scale.setScalar(1.0);
-    p4.position.set(150, FLOOR_Y, -60);
+    p4.position.set(100, FLOOR_Y, 60);
     this.scene.add(p4);
   }
 
@@ -812,8 +811,8 @@ export class Room {
 
     const lamp = buildVoxelGroup(lampVoxels);
     lamp.scale.setScalar(1.3);
-    const lampX = 80;
-    const lampZ = -10;
+    const lampX = 110;
+    const lampZ = 20;
     lamp.position.set(lampX, FLOOR_Y, lampZ);
     this.scene.add(lamp);
 
@@ -826,8 +825,8 @@ export class Room {
   // ── Side Table (next to sofa) ───────────────────────────
 
   _buildSideTable() {
-    const stX = -72;
-    const stZ = 15;
+    const stX = -55;
+    const stZ = 65;
     const legH = 6;
 
     // Table top (round approximated as octagonal box)
@@ -859,58 +858,10 @@ export class Room {
     this.scene.add(vase);
   }
 
-  // ── Bookshelf (against right wall) ──────────────────────
-
-  _buildBookshelf() {
-    const bsX = 140;
-    const bsZ = -60;
-    const shelfMat = new THREE.MeshLambertMaterial({ color: 0x5c3a1a });
-
-    // Frame — back, sides, top, bottom
-    const backGeo = new THREE.BoxGeometry(25, 40, 1);
-    const back = new THREE.Mesh(backGeo, shelfMat);
-    back.position.set(bsX, FLOOR_Y + 20, bsZ - 5);
-    this.scene.add(back);
-
-    const sideGeo = new THREE.BoxGeometry(1, 40, 10);
-    const leftSide = new THREE.Mesh(sideGeo, shelfMat);
-    leftSide.position.set(bsX - 12, FLOOR_Y + 20, bsZ);
-    this.scene.add(leftSide);
-    const rightSide = new THREE.Mesh(sideGeo, shelfMat.clone());
-    rightSide.position.set(bsX + 12, FLOOR_Y + 20, bsZ);
-    this.scene.add(rightSide);
-
-    // Shelves (4 levels)
-    const shelfGeo = new THREE.BoxGeometry(24, 0.8, 10);
-    for (let i = 0; i < 5; i++) {
-      const shelf = new THREE.Mesh(shelfGeo, shelfMat.clone());
-      shelf.position.set(bsX, FLOOR_Y + i * 10, bsZ);
-      this.scene.add(shelf);
-    }
-
-    // Books on shelves
-    const bookColors = [0x8b2500, 0x2d4a6f, 0x4a6b3d, 0x6b4226, 0x553366, 0x336655, 0x994433, 0x445566];
-    for (let shelf = 0; shelf < 4; shelf++) {
-      const shelfY = FLOOR_Y + shelf * 10 + 0.4;
-      const numBooks = 4 + Math.floor(Math.random() * 4);
-      let bx = bsX - 10;
-      for (let b = 0; b < numBooks && bx < bsX + 10; b++) {
-        const bw = 1.2 + Math.random() * 1.5;
-        const bh = 5 + Math.random() * 4;
-        const bMat = new THREE.MeshLambertMaterial({ color: bookColors[(shelf * 5 + b) % bookColors.length] });
-        const bGeo = new THREE.BoxGeometry(bw, bh, 7);
-        const book = new THREE.Mesh(bGeo, bMat);
-        book.position.set(bx + bw / 2, shelfY + bh / 2, bsZ);
-        this.scene.add(book);
-        bx += bw + 0.3;
-      }
-    }
-  }
-
   // ── Door ────────────────────────────────────────────────
 
   _buildDoor() {
-    const doorX = 100;
+    const doorX = 60;
     const doorCenterY = FLOOR_Y + 18;
 
     // Door frame
@@ -983,7 +934,7 @@ export class Room {
   }
 
   _buildLightswitch() {
-    const switchX = 80;
+    const switchX = 85;
     const switchY = FLOOR_Y + 22;
     const switchZ = BACK_Z + 0.6;
 
