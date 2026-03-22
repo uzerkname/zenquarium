@@ -70,12 +70,122 @@ export class Room {
     floor.position.set(0, FLOOR_Y, BACK_Z + ROOM_D / 2);
     this.scene.add(floor);
 
-    // Left wall
+    // Left wall — segmented with two windows
+    // Window 1: Z=-50 to -30, Window 2: Z=+30 to +50
+    // Both: Y=FLOOR_Y+20 to FLOOR_Y+60
     const sideGeo = new THREE.PlaneGeometry(ROOM_D, WALL_H);
-    const leftWall = new THREE.Mesh(sideGeo, wallMat.clone());
-    leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.set(-HALF_W, FLOOR_Y + WALL_H / 2, BACK_Z + ROOM_D / 2);
-    this.scene.add(leftWall);
+    const leftWallMat = wallMat.clone();
+    const leftWallX = -HALF_W;
+    const leftWallCenterZ = BACK_Z + ROOM_D / 2;
+    const lwRot = Math.PI / 2;
+
+    // Bottom strip (full width, below windows)
+    const lwBottom = new THREE.Mesh(
+      new THREE.PlaneGeometry(ROOM_D, 20),
+      leftWallMat
+    );
+    lwBottom.rotation.y = lwRot;
+    lwBottom.position.set(leftWallX, FLOOR_Y + 10, leftWallCenterZ);
+    this.scene.add(lwBottom);
+
+    // Top strip (full width, above windows)
+    const lwTop = new THREE.Mesh(
+      new THREE.PlaneGeometry(ROOM_D, 60),
+      leftWallMat.clone()
+    );
+    lwTop.rotation.y = lwRot;
+    lwTop.position.set(leftWallX, FLOOR_Y + 90, leftWallCenterZ);
+    this.scene.add(lwTop);
+
+    // Left column (Z: -150 to -50, between back wall and window 1)
+    const lwLeftCol = new THREE.Mesh(
+      new THREE.PlaneGeometry(100, 40),
+      leftWallMat.clone()
+    );
+    lwLeftCol.rotation.y = lwRot;
+    lwLeftCol.position.set(leftWallX, FLOOR_Y + 40, BACK_Z + 50);
+    this.scene.add(lwLeftCol);
+
+    // Center column (Z: -30 to +30, between the two windows)
+    const lwCenterCol = new THREE.Mesh(
+      new THREE.PlaneGeometry(60, 40),
+      leftWallMat.clone()
+    );
+    lwCenterCol.rotation.y = lwRot;
+    lwCenterCol.position.set(leftWallX, FLOOR_Y + 40, leftWallCenterZ);
+    this.scene.add(lwCenterCol);
+
+    // Right column (Z: +50 to +150, between window 2 and front wall)
+    const lwRightCol = new THREE.Mesh(
+      new THREE.PlaneGeometry(100, 40),
+      leftWallMat.clone()
+    );
+    lwRightCol.rotation.y = lwRot;
+    lwRightCol.position.set(leftWallX, FLOOR_Y + 40, BACK_Z + ROOM_D - 50);
+    this.scene.add(lwRightCol);
+
+    // Window frames + sky + trees for each window
+    const windowFrameMat = new THREE.MeshLambertMaterial({ color: 0xf0ebe0 });
+    const skyMat = new THREE.MeshLambertMaterial({ color: 0x87CEEB, side: THREE.DoubleSide });
+    const trunkMat = new THREE.MeshLambertMaterial({ color: 0x5c3a1a });
+    const canopyMat = new THREE.MeshLambertMaterial({ color: 0x2d6b2d });
+    const groundMat = new THREE.MeshLambertMaterial({ color: 0x4a8b3a });
+    const curtainMat = new THREE.MeshLambertMaterial({
+      color: 0xffffff, opacity: 0.15, transparent: true, side: THREE.DoubleSide
+    });
+
+    const windowCentersZ = [-40, 40];
+    for (const wz of windowCentersZ) {
+      const winY = FLOOR_Y + 40;
+      const winX = leftWallX;
+
+      // Frame — 4 bars around the opening (20 wide x 40 tall)
+      const fTop = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 22), windowFrameMat);
+      fTop.position.set(winX + 0.3, FLOOR_Y + 60.5, wz);
+      this.scene.add(fTop);
+      const fBot = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 22), windowFrameMat.clone());
+      fBot.position.set(winX + 0.3, FLOOR_Y + 19.5, wz);
+      this.scene.add(fBot);
+      const fLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 42, 1), windowFrameMat.clone());
+      fLeft.position.set(winX + 0.3, winY, wz - 10.5);
+      this.scene.add(fLeft);
+      const fRight = new THREE.Mesh(new THREE.BoxGeometry(1, 42, 1), windowFrameMat.clone());
+      fRight.position.set(winX + 0.3, winY, wz + 10.5);
+      this.scene.add(fRight);
+
+      // Sky backdrop
+      const sky = new THREE.Mesh(new THREE.PlaneGeometry(20, 40), skyMat.clone());
+      sky.rotation.y = lwRot;
+      sky.position.set(winX - 5, winY, wz);
+      this.scene.add(sky);
+
+      // Tree: trunk + canopy
+      const trunk = new THREE.Mesh(new THREE.BoxGeometry(2, 15, 2), trunkMat.clone());
+      trunk.position.set(winX - 4, winY - 5, wz);
+      this.scene.add(trunk);
+      const canopy = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), canopyMat.clone());
+      canopy.position.set(winX - 4, winY + 7, wz);
+      this.scene.add(canopy);
+      const canopy2 = new THREE.Mesh(new THREE.BoxGeometry(7, 7, 7), new THREE.MeshLambertMaterial({ color: 0x3d8b3d }));
+      canopy2.position.set(winX - 4, winY + 12, wz + 3);
+      this.scene.add(canopy2);
+
+      // Ground strip
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(20, 10), groundMat.clone());
+      ground.rotation.y = lwRot;
+      ground.position.set(winX - 5, FLOOR_Y + 20, wz);
+      this.scene.add(ground);
+
+      // Curtain panels
+      const curtainL = new THREE.Mesh(new THREE.PlaneGeometry(4, 38), curtainMat.clone());
+      curtainL.rotation.y = lwRot;
+      curtainL.position.set(winX + 0.5, winY, wz - 9);
+      this.scene.add(curtainL);
+      const curtainR = new THREE.Mesh(new THREE.PlaneGeometry(4, 38), curtainMat.clone());
+      curtainR.rotation.y = lwRot;
+      curtainR.position.set(winX + 0.5, winY, wz + 9);
+      this.scene.add(curtainR);
+    }
 
     // Right wall
     const rightWall = new THREE.Mesh(sideGeo, wallMat.clone());
@@ -112,10 +222,13 @@ export class Room {
     bbFront.position.set(0, FLOOR_Y + bbH / 2, frontWallZ - 0.4);
     this.scene.add(bbFront);
 
-    // Left baseboard
-    const bbLeft = new THREE.Mesh(new THREE.BoxGeometry(0.8, bbH, ROOM_D), bbMat.clone());
-    bbLeft.position.set(-HALF_W + 0.4, FLOOR_Y + bbH / 2, BACK_Z + ROOM_D / 2);
-    this.scene.add(bbLeft);
+    // Left baseboard — split around windows (windows span Z=-50 to +50 with gap)
+    const bbLeftBack = new THREE.Mesh(new THREE.BoxGeometry(0.8, bbH, 100), bbMat.clone());
+    bbLeftBack.position.set(-HALF_W + 0.4, FLOOR_Y + bbH / 2, BACK_Z + 50);
+    this.scene.add(bbLeftBack);
+    const bbLeftFront = new THREE.Mesh(new THREE.BoxGeometry(0.8, bbH, 100), bbMat.clone());
+    bbLeftFront.position.set(-HALF_W + 0.4, FLOOR_Y + bbH / 2, BACK_Z + ROOM_D - 50);
+    this.scene.add(bbLeftFront);
 
     // Right baseboard
     const bbRight = new THREE.Mesh(new THREE.BoxGeometry(0.8, bbH, ROOM_D), bbMat.clone());
