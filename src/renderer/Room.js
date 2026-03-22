@@ -193,12 +193,105 @@ export class Room {
     rightWall.position.set(HALF_W, FLOOR_Y + WALL_H / 2, BACK_Z + ROOM_D / 2);
     this.scene.add(rightWall);
 
-    // Front wall
+    // Front wall — segmented with one long horizontal window
+    // Window: X=-150 to +50, Y=FLOOR_Y+15 to FLOOR_Y+40
     const frontWallZ = BACK_Z + ROOM_D;
-    const frontWall = new THREE.Mesh(backGeo.clone(), wallMat.clone());
-    frontWall.rotation.y = Math.PI;
-    frontWall.position.set(0, FLOOR_Y + WALL_H / 2, frontWallZ);
-    this.scene.add(frontWall);
+    const fwMat = wallMat.clone();
+    const fwRot = Math.PI;
+
+    // Bottom strip (full width)
+    const fwBottom = new THREE.Mesh(
+      new THREE.PlaneGeometry(ROOM_W, 15),
+      fwMat
+    );
+    fwBottom.rotation.y = fwRot;
+    fwBottom.position.set(0, FLOOR_Y + 7.5, frontWallZ);
+    this.scene.add(fwBottom);
+
+    // Top strip (full width)
+    const fwTop = new THREE.Mesh(
+      new THREE.PlaneGeometry(ROOM_W, 80),
+      fwMat.clone()
+    );
+    fwTop.rotation.y = fwRot;
+    fwTop.position.set(0, FLOOR_Y + 80, frontWallZ);
+    this.scene.add(fwTop);
+
+    // Left pillar (X: -250 to -150)
+    const fwLeftPillar = new THREE.Mesh(
+      new THREE.PlaneGeometry(100, 25),
+      fwMat.clone()
+    );
+    fwLeftPillar.rotation.y = fwRot;
+    fwLeftPillar.position.set(-200, FLOOR_Y + 27.5, frontWallZ);
+    this.scene.add(fwLeftPillar);
+
+    // Right pillar (X: +50 to +250)
+    const fwRightPillar = new THREE.Mesh(
+      new THREE.PlaneGeometry(200, 25),
+      fwMat.clone()
+    );
+    fwRightPillar.rotation.y = fwRot;
+    fwRightPillar.position.set(150, FLOOR_Y + 27.5, frontWallZ);
+    this.scene.add(fwRightPillar);
+
+    // Front window frame
+    const fwFrameMat = new THREE.MeshLambertMaterial({ color: 0xf0ebe0 });
+    const fwWinCenterX = -50;
+    const fwWinCenterY = FLOOR_Y + 27.5;
+    // Top bar
+    this.scene.add(Object.assign(
+      new THREE.Mesh(new THREE.BoxGeometry(202, 1, 1), fwFrameMat),
+      { position: new THREE.Vector3(fwWinCenterX, FLOOR_Y + 40.5, frontWallZ - 0.3) }
+    ));
+    // Bottom bar
+    this.scene.add(Object.assign(
+      new THREE.Mesh(new THREE.BoxGeometry(202, 1, 1), fwFrameMat.clone()),
+      { position: new THREE.Vector3(fwWinCenterX, FLOOR_Y + 14.5, frontWallZ - 0.3) }
+    ));
+    // Left bar
+    this.scene.add(Object.assign(
+      new THREE.Mesh(new THREE.BoxGeometry(1, 27, 1), fwFrameMat.clone()),
+      { position: new THREE.Vector3(-151, fwWinCenterY, frontWallZ - 0.3) }
+    ));
+    // Right bar
+    this.scene.add(Object.assign(
+      new THREE.Mesh(new THREE.BoxGeometry(1, 27, 1), fwFrameMat.clone()),
+      { position: new THREE.Vector3(51, fwWinCenterY, frontWallZ - 0.3) }
+    ));
+
+    // Sky backdrop behind front window
+    const fwSky = new THREE.Mesh(
+      new THREE.PlaneGeometry(200, 25),
+      new THREE.MeshLambertMaterial({ color: 0x87CEEB, side: THREE.DoubleSide })
+    );
+    fwSky.rotation.y = fwRot;
+    fwSky.position.set(fwWinCenterX, fwWinCenterY, frontWallZ + 5);
+    this.scene.add(fwSky);
+
+    // Three trees behind front window
+    const fwTreeTrunkMat = new THREE.MeshLambertMaterial({ color: 0x5c3a1a });
+    const fwTreeCanopyMat = new THREE.MeshLambertMaterial({ color: 0x2d6b2d });
+    const fwTreeCanopy2Mat = new THREE.MeshLambertMaterial({ color: 0x3d8b3d });
+    for (const tx of [-100, -50, 0]) {
+      const t = new THREE.Mesh(new THREE.BoxGeometry(2, 12, 2), fwTreeTrunkMat.clone());
+      t.position.set(tx, fwWinCenterY - 2, frontWallZ + 4);
+      this.scene.add(t);
+      const c = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), fwTreeCanopyMat.clone());
+      c.position.set(tx, fwWinCenterY + 7, frontWallZ + 4);
+      this.scene.add(c);
+      const c2 = new THREE.Mesh(new THREE.BoxGeometry(6, 6, 6), fwTreeCanopy2Mat.clone());
+      c2.position.set(tx + 4, fwWinCenterY + 10, frontWallZ + 4);
+      this.scene.add(c2);
+    }
+    // Ground strip behind front window
+    const fwGround = new THREE.Mesh(
+      new THREE.PlaneGeometry(200, 8),
+      new THREE.MeshLambertMaterial({ color: 0x4a8b3a })
+    );
+    fwGround.rotation.y = fwRot;
+    fwGround.position.set(fwWinCenterX, FLOOR_Y + 15, frontWallZ + 5);
+    this.scene.add(fwGround);
 
     // Ceiling
     const ceilGeo = new THREE.PlaneGeometry(ROOM_W, ROOM_D);
@@ -217,10 +310,13 @@ export class Room {
     bbBack.position.set(0, FLOOR_Y + bbH / 2, BACK_Z + 0.4);
     this.scene.add(bbBack);
 
-    // Front baseboard
-    const bbFront = new THREE.Mesh(new THREE.BoxGeometry(ROOM_W, bbH, 0.8), bbMat.clone());
-    bbFront.position.set(0, FLOOR_Y + bbH / 2, frontWallZ - 0.4);
-    this.scene.add(bbFront);
+    // Front baseboard — split around window (window spans X=-150 to +50)
+    const bbFrontLeft = new THREE.Mesh(new THREE.BoxGeometry(100, bbH, 0.8), bbMat.clone());
+    bbFrontLeft.position.set(-200, FLOOR_Y + bbH / 2, frontWallZ - 0.4);
+    this.scene.add(bbFrontLeft);
+    const bbFrontRight = new THREE.Mesh(new THREE.BoxGeometry(200, bbH, 0.8), bbMat.clone());
+    bbFrontRight.position.set(150, FLOOR_Y + bbH / 2, frontWallZ - 0.4);
+    this.scene.add(bbFrontRight);
 
     // Left baseboard — split around windows (windows span Z=-50 to +50 with gap)
     const bbLeftBack = new THREE.Mesh(new THREE.BoxGeometry(0.8, bbH, 100), bbMat.clone());
