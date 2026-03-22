@@ -1,0 +1,102 @@
+<h2>Room Redesign — Layout Overview</h2>
+<p class="subtitle">Matching the reference image: cozy living room with fish tank as the centerpiece</p>
+
+<div style="background: #1a1a2e; border-radius: 12px; padding: 30px; margin: 20px 0;">
+  <div style="position: relative; width: 600px; height: 400px; margin: 0 auto; background: #2a2a3e; border-radius: 8px; border: 2px solid #444; font-family: monospace; font-size: 12px;">
+
+    <!-- Room label -->
+    <div style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: #888; font-size: 10px;">BACK WALL (with door)</div>
+    <div style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); color: #888; font-size: 10px;">FRONT (camera view)</div>
+    <div style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%) rotate(-90deg); color: #888; font-size: 10px;">LEFT WALL (window)</div>
+    <div style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%) rotate(90deg); color: #888; font-size: 10px;">RIGHT WALL</div>
+
+    <!-- Window on left wall -->
+    <div style="position: absolute; left: 15px; top: 80px; width: 8px; height: 160px; background: #5599cc; border: 2px solid #7ab; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
+      <span style="writing-mode: vertical-lr; color: #fff; font-size: 9px; text-shadow: 0 0 3px #000;">WINDOW</span>
+    </div>
+
+    <!-- Big rug (centered) -->
+    <div style="position: absolute; left: 80px; top: 100px; width: 440px; height: 220px; background: rgba(180,140,100,0.25); border: 2px dashed #b08860; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #b08860; font-size: 11px;">BIG AREA RUG</span>
+    </div>
+
+    <!-- Sofa (left side, facing right/center) -->
+    <div style="position: absolute; left: 90px; top: 140px; width: 140px; height: 45px; background: #e8e0d8; border: 2px solid #ccc; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #666; font-size: 11px;">WHITE SOFA + pillows</span>
+    </div>
+
+    <!-- Coffee table (center) -->
+    <div style="position: absolute; left: 160px; top: 200px; width: 100px; height: 40px; background: #8b6f47; border: 2px solid #6b4f27; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #fff; font-size: 10px;">COFFEE TABLE<br/>books+remote+plant</span>
+    </div>
+
+    <!-- Fish Tank (center-right, the star!) -->
+    <div style="position: absolute; left: 310px; top: 130px; width: 120px; height: 80px; background: rgba(50,150,220,0.3); border: 3px solid #4499dd; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(50,150,220,0.3);">
+      <span style="color: #4cf; font-size: 13px; font-weight: bold;">FISH TANK</span>
+    </div>
+
+    <!-- TV Console (back wall, right side) -->
+    <div style="position: absolute; right: 40px; top: 25px; width: 130px; height: 25px; background: #6b4f27; border: 2px solid #8b6f47; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #eee; font-size: 10px;">TV CONSOLE + decor</span>
+    </div>
+
+    <!-- TV (on console) -->
+    <div style="position: absolute; right: 55px; top: 10px; width: 100px; height: 15px; background: #222; border: 2px solid #444; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #888; font-size: 9px;">FLATSCREEN TV</span>
+    </div>
+
+    <!-- Floor lamp (right side) -->
+    <div style="position: absolute; right: 50px; top: 140px; width: 20px; height: 20px; background: #ffe8c0; border: 2px solid #d4c5a9; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #666; font-size: 8px;">LAMP</span>
+    </div>
+
+    <!-- Table lamp on side table -->
+    <div style="position: absolute; left: 100px; top: 115px; width: 16px; height: 16px; background: #ffe8c0; border: 2px solid #d4c5a9; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #666; font-size: 7px;">L</span>
+    </div>
+
+    <!-- Plants -->
+    <div style="position: absolute; left: 40px; top: 60px; color: #4a8; font-size: 16px;">🌿</div>
+    <div style="position: absolute; left: 350px; top: 40px; color: #4a8; font-size: 16px;">🌱</div>
+    <div style="position: absolute; right: 30px; top: 260px; color: #4a8; font-size: 16px;">🪴</div>
+    <div style="position: absolute; left: 60px; top: 300px; color: #4a8; font-size: 16px;">🌿</div>
+
+    <!-- Door (back wall, left area) -->
+    <div style="position: absolute; left: 250px; top: 18px; width: 35px; height: 30px; background: #7a5230; border: 2px solid #5c3a1a; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #eee; font-size: 9px;">DOOR</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>What Changes</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px;">
+    <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 16px; border-left: 3px solid #4a9;">
+      <h4 style="color: #4a9; margin: 0 0 8px 0;">New Elements</h4>
+      <ul style="margin: 0; padding-left: 16px; color: #ccc; line-height: 1.8;">
+        <li><strong>Big window</strong> on left wall — lush trees outside</li>
+        <li><strong>TV console</strong> — low wood, against back wall</li>
+        <li><strong>Flatscreen TV</strong> — on the console</li>
+        <li><strong>Console decor</strong> — small plant, photo frame</li>
+        <li><strong>TV remote</strong> on coffee table</li>
+        <li><strong>Small plant</strong> on coffee table</li>
+      </ul>
+    </div>
+    <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 16px; border-left: 3px solid #c84;">
+      <h4 style="color: #c84; margin: 0 0 8px 0;">Modified Elements</h4>
+      <ul style="margin: 0; padding-left: 16px; color: #ccc; line-height: 1.8;">
+        <li><strong>Floor</strong> — lighter hardwood color</li>
+        <li><strong>Sofa</strong> — white/cream cloth instead of dark gray</li>
+        <li><strong>Pillows</strong> — blue patterned + warm tones</li>
+        <li><strong>Rug</strong> — ONE big centered rug (oriental)</li>
+        <li><strong>Bookshelf removed</strong> — replaced by TV console</li>
+        <li><strong>Side table</strong> — repositioned near sofa</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>Kept As-Is</h3>
+  <p style="color: #aaa;">Fish tank + cabinet, door + cat easter egg, lightswitch, floor lamp (repositioned), plants (repositioned)</p>
+</div>

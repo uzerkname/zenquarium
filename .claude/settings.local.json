@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx --version)",
+      "Bash(ls \"C:\\\\Users\\\\akenn\\\\Zenquarium\\\\node_modules\\\\.bin\\\\vite\"*)",
+      "Bash(ls C:/Users/akenn/Zenquarium/node_modules/.bin/vite*)",
+      "Bash(find C:UsersakennZenquarium/src -type f -name *.js)",
+      "Bash(node -e \":*)"
+    ]
+  }
+}

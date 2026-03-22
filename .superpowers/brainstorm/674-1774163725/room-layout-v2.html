@@ -1,0 +1,89 @@
+<h2>Room Redesign — Layout v2 (Corrected)</h2>
+<p class="subtitle">Matching your sketch: windows on left + front walls, TV on left of back wall</p>
+
+<div style="background: #1a1a2e; border-radius: 12px; padding: 30px; margin: 20px 0;">
+  <div style="position: relative; width: 620px; height: 340px; margin: 0 auto; background: #2a2a3e; border-radius: 8px; border: 2px solid #666; font-family: monospace; font-size: 12px;">
+
+    <!-- Room labels -->
+    <div style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: #888; font-size: 10px;">BACK WALL</div>
+    <div style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); color: #888; font-size: 10px;">FRONT WALL (camera side)</div>
+
+    <!-- Windows on left wall (two narrow) -->
+    <div style="position: absolute; left: 0px; top: 80px; width: 6px; height: 50px; background: #5599cc; border: 2px solid #7ab; border-radius: 2px;"></div>
+    <div style="position: absolute; left: 0px; top: 160px; width: 6px; height: 50px; background: #5599cc; border: 2px solid #7ab; border-radius: 2px;"></div>
+    <div style="position: absolute; left: -60px; top: 145px; color: #5599cc; font-size: 11px; transform: rotate(-90deg);">WINDOWS</div>
+
+    <!-- Window on front wall (long horizontal) -->
+    <div style="position: absolute; bottom: 0px; left: 100px; width: 300px; height: 6px; background: #5599cc; border: 2px solid #7ab; border-radius: 2px;"></div>
+    <div style="position: absolute; bottom: -20px; left: 220px; color: #5599cc; font-size: 11px;">WINDOWS</div>
+
+    <!-- TV (on left side of back wall) -->
+    <div style="position: absolute; left: 40px; top: 18px; width: 140px; height: 12px; background: #222; border: 2px solid #555; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #999; font-size: 10px;">FLATSCREEN TV</span>
+    </div>
+
+    <!-- TV Stand (below TV) -->
+    <div style="position: absolute; left: 30px; top: 32px; width: 160px; height: 22px; background: #6b4f27; border: 2px solid #8b6f47; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #eee; font-size: 10px;">TV CONSOLE + decor</span>
+    </div>
+
+    <!-- White Cloth Couch (left-front area) -->
+    <div style="position: absolute; left: 50px; top: 220px; width: 180px; height: 55px; background: #e8e0d8; border: 2px solid #ccc; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #666; font-size: 12px;">WHITE CLOTH COUCH<br/><span style="font-size:10px">+ throw pillows</span></span>
+    </div>
+
+    <!-- Coffee Table (between couch and tank) -->
+    <div style="position: absolute; left: 80px; top: 155px; width: 120px; height: 45px; background: #8b6f47; border: 2px solid #6b4f27; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #fff; font-size: 10px;">COFFEE TABLE<br/>books + remote + plant</span>
+    </div>
+
+    <!-- Fish Tank (CENTER of room!) -->
+    <div style="position: absolute; left: 280px; top: 110px; width: 110px; height: 120px; background: rgba(50,150,220,0.25); border: 3px solid #4499dd; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(50,150,220,0.3);">
+      <span style="color: #4cf; font-size: 14px; font-weight: bold;">FISH<br/>TANK</span>
+    </div>
+
+    <!-- Red marker 1 (front-right) -->
+    <div style="position: absolute; right: 60px; bottom: 50px; width: 35px; height: 35px; background: #cc3333; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ff4444;">
+      <span style="color: #fff; font-size: 14px; font-weight: bold;">1</span>
+    </div>
+    <div style="position: absolute; right: 30px; bottom: 30px; color: #cc3333; font-size: 10px;">???</div>
+
+    <!-- Red marker 2 (back-right) -->
+    <div style="position: absolute; right: 40px; top: 50px; width: 35px; height: 35px; background: #cc3333; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ff4444;">
+      <span style="color: #fff; font-size: 14px; font-weight: bold;">2</span>
+    </div>
+    <div style="position: absolute; right: 10px; top: 45px; color: #cc3333; font-size: 10px;">???</div>
+
+    <!-- Door (back wall, right of center) -->
+    <div style="position: absolute; left: 350px; top: 18px; width: 35px; height: 25px; background: #7a5230; border: 2px solid #5c3a1a; border-radius: 2px; display: flex; align-items: center; justify-content: center;">
+      <span style="color: #eee; font-size: 9px;">DOOR</span>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top: 24px;">What are the red markers?</h3>
+<p class="subtitle">Click the option that matches what you had in mind for spots 1 and 2</p>
+
+<div class="options">
+  <div class="option" data-choice="plants-lamps" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Plants + Floor Lamps</h3>
+      <p>Large potted plants and standing lamps to fill the right side</p>
+    </div>
+  </div>
+  <div class="option" data-choice="more-furniture" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>More Furniture</h3>
+      <p>An armchair, side table, or reading nook on the right side</p>
+    </div>
+  </div>
+  <div class="option" data-choice="decoration" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Just Decorative</h3>
+      <p>The red markers were just annotations — nothing specific goes there</p>
+    </div>
+  </div>
+</div>

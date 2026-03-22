@@ -1,0 +1,52 @@
+import { DECO_TYPES } from '../decorations/types/index.js';
+import { generatePreviews } from './DecorationPreview.js';
+
+export class DecorationPanel {
+  constructor(placement, container) {
+    this.placement = placement;
+    this.container = container;
+    this._selected = null;
+    this._previews = {};
+    this._render();
+    this._loadPreviews();
+  }
+
+  _loadPreviews() {
+    // Generate 3D previews after first paint to avoid blocking startup
+    requestAnimationFrame(() => {
+      this._previews = generatePreviews();
+      this._render();
+    });
+  }
+
+  _render() {
+    this.container.innerHTML = `
+      <div class="panel-title">Decor</div>
+      <div class="card-grid">
+        ${DECO_TYPES.map(d => this._card(d)).join('')}
+      </div>
+      ${this._selected ? `<div style="margin-top:10px;color:#ffb74d;font-size:11px;text-align:center;font-weight:500">Placing: ${this._selected}</div>` : ''}`;
+
+    for (const d of DECO_TYPES) {
+      this.container.querySelector(`[data-deco="${d.key}"]`)
+        ?.addEventListener('click', () => {
+          this._selected = d.name;
+          this.placement.beginPlacement(d.key);
+          this._render();
+        });
+    }
+  }
+
+  _card(type) {
+    const active = this._selected === type.name;
+    const preview = this._previews[type.key];
+    const icon = preview
+      ? `<img src="${preview}" class="card-preview" draggable="false" alt="${type.name}">`
+      : `<span class="card-emoji">${type.emoji}</span>`;
+    return `
+      <div class="deco-card${active ? ' deco-active' : ''}" data-deco="${type.key}">
+        ${icon}
+        <div class="card-name">${type.name}</div>
+      </div>`;
+  }
+}
