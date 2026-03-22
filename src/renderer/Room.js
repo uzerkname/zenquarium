@@ -406,13 +406,13 @@ export class Room {
   // ── Sofa (large sectional) ──────────────────────────────
 
   _buildSofa() {
-    const sofaX = -100;
-    const sofaZ = 20;
+    const sofaX = -80;
+    const sofaZ = 65;
     const legH = 2.5;
     const seatY = FLOOR_Y + legH + 3;
 
     // Sofa legs (6 for long sofa)
-    const legMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+    const legMat = new THREE.MeshLambertMaterial({ color: 0x8b7355 });
     const legGeo = new THREE.BoxGeometry(1.2, legH, 1.2);
     const legPos = [
       [-18, -7], [0, -7], [18, -7],
@@ -425,21 +425,21 @@ export class Room {
     }
 
     // Seat cushion (wide 3-seater)
-    const seatMat = new THREE.MeshLambertMaterial({ color: 0x3a3a3a });
+    const seatMat = new THREE.MeshLambertMaterial({ color: 0xf0ebe5 });
     const seatGeo = new THREE.BoxGeometry(40, 6, 16);
     const seat = new THREE.Mesh(seatGeo, seatMat);
     seat.position.set(sofaX, seatY, sofaZ);
     this.scene.add(seat);
 
     // Back cushion
-    const backMat = new THREE.MeshLambertMaterial({ color: 0x333333 });
+    const backMat = new THREE.MeshLambertMaterial({ color: 0xeae5dd });
     const backGeo = new THREE.BoxGeometry(40, 14, 4);
     const back = new THREE.Mesh(backGeo, backMat);
     back.position.set(sofaX, seatY + 10, sofaZ - 6);
     this.scene.add(back);
 
     // Armrests
-    const armMat = new THREE.MeshLambertMaterial({ color: 0x363636 });
+    const armMat = new THREE.MeshLambertMaterial({ color: 0xede8e0 });
     const armGeo = new THREE.BoxGeometry(4, 8, 16);
     const leftArm = new THREE.Mesh(armGeo, armMat);
     leftArm.position.set(sofaX - 22, seatY + 1, sofaZ);
@@ -449,7 +449,7 @@ export class Room {
     this.scene.add(rightArm);
 
     // Seat cushion divider lines (subtle)
-    const divMat = new THREE.MeshLambertMaterial({ color: 0x2e2e2e });
+    const divMat = new THREE.MeshLambertMaterial({ color: 0xe0dbd3 });
     const divGeo = new THREE.BoxGeometry(0.3, 5.5, 15);
     for (const dx of [-12, 12]) {
       const div = new THREE.Mesh(divGeo, divMat);
@@ -458,7 +458,7 @@ export class Room {
     }
 
     // Throw pillows
-    const pillowColors = [0x556677, 0x667766, 0x886655];
+    const pillowColors = [0x6688aa, 0x4477aa, 0xc4956a];
     const pillowGeo = new THREE.BoxGeometry(5, 5, 3.5);
     const pillowPositions = [
       [-14, 0.15], [0, -0.1], [14, 0.12],
