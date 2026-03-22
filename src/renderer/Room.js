@@ -63,7 +63,7 @@ export class Room {
 
     // Floor with wood grain vertex variation
     const floorGeo = new THREE.PlaneGeometry(ROOM_W, ROOM_D, 60, 40);
-    const floorMat = new THREE.MeshLambertMaterial({ color: 0x8b6f47, vertexColors: true });
+    const floorMat = new THREE.MeshLambertMaterial({ color: 0xc4a574, vertexColors: true });
     this._addWoodGrain(floorGeo);
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
@@ -133,10 +133,10 @@ export class Room {
       const plank = Math.floor((px + HALF_W) / 8);
       const plankShade = (plank % 2 === 0) ? 0.0 : 0.04;
       const grain = Math.sin(pz * 1.5 + plank * 3.7) * 0.02;
-      const v = 0.52 + plankShade + grain + Math.random() * 0.03;
+      const v = 0.72 + plankShade + grain + Math.random() * 0.03;
       colors[i * 3]     = v + 0.05;
       colors[i * 3 + 1] = v * 0.85;
-      colors[i * 3 + 2] = v * 0.55;
+      colors[i * 3 + 2] = v * 0.62;
     }
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   }
