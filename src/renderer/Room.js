@@ -37,6 +37,8 @@ export class Room {
     this._buildSofa();
     this._buildCoffeeTable();
     this._buildRug();
+    this._buildTVConsole();
+    this._buildTV();
     this._buildFloorPlants();
     this._buildFloorLamp();
     this._buildSideTable();
@@ -580,6 +582,95 @@ export class Room {
       colors[i * 3 + 2] = b + noise;
     }
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  }
+
+  // ── TV Console (low wooden cabinet) ────────────────────
+
+  _buildTVConsole() {
+    const tcX = -80;
+    const tcZ = BACK_Z + 8;
+    const legH = 3;
+    const bodyH = 8;
+
+    // Legs
+    const legMat = new THREE.MeshLambertMaterial({ color: 0x333333 });
+    const legGeo = new THREE.BoxGeometry(1.2, legH, 1.2);
+    const legOffsets = [[-28, -7], [28, -7], [-28, 7], [28, 7]];
+    for (const [dx, dz] of legOffsets) {
+      const leg = new THREE.Mesh(legGeo, legMat);
+      leg.position.set(tcX + dx, FLOOR_Y + legH / 2, tcZ + dz);
+      this.scene.add(leg);
+    }
+
+    // Body
+    const bodyMat = new THREE.MeshLambertMaterial({ color: 0x7a5a3a });
+    const body = new THREE.Mesh(new THREE.BoxGeometry(60, bodyH, 16), bodyMat);
+    body.position.set(tcX, FLOOR_Y + legH + bodyH / 2, tcZ);
+    this.scene.add(body);
+
+    // Top surface
+    const topMat = new THREE.MeshLambertMaterial({ color: 0x6b4a2a });
+    const top = new THREE.Mesh(new THREE.BoxGeometry(62, 0.5, 17), topMat);
+    top.position.set(tcX, FLOOR_Y + legH + bodyH + 0.25, tcZ);
+    this.scene.add(top);
+
+    // Cabinet door divider line
+    const divMat = new THREE.MeshLambertMaterial({ color: 0x5a3a1a });
+    const div = new THREE.Mesh(new THREE.BoxGeometry(0.3, bodyH - 1, 0.3), divMat);
+    div.position.set(tcX, FLOOR_Y + legH + bodyH / 2, tcZ + 8.1);
+    this.scene.add(div);
+
+    // Decor: small photo frame
+    const frameMat = new THREE.MeshLambertMaterial({ color: 0x333333 });
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(4, 5, 0.5), frameMat);
+    frame.position.set(tcX - 15, FLOOR_Y + legH + bodyH + 3, tcZ);
+    this.scene.add(frame);
+    const frameInner = new THREE.Mesh(
+      new THREE.BoxGeometry(3, 4, 0.1),
+      new THREE.MeshLambertMaterial({ color: 0xddc9a5 })
+    );
+    frameInner.position.set(tcX - 15, FLOOR_Y + legH + bodyH + 3, tcZ + 0.3);
+    this.scene.add(frameInner);
+
+    // Decor: small plant
+    const dPot = new THREE.Mesh(
+      new THREE.BoxGeometry(2, 2, 2),
+      new THREE.MeshLambertMaterial({ color: 0xe8e0d0 })
+    );
+    dPot.position.set(tcX + 15, FLOOR_Y + legH + bodyH + 1.25, tcZ);
+    this.scene.add(dPot);
+    const dPlant = new THREE.Mesh(
+      new THREE.BoxGeometry(3, 3, 3),
+      new THREE.MeshLambertMaterial({ color: 0x2d8b2d })
+    );
+    dPlant.position.set(tcX + 15, FLOOR_Y + legH + bodyH + 3, tcZ);
+    this.scene.add(dPlant);
+  }
+
+  // ── Flatscreen TV ──────────────────────────────────────
+
+  _buildTV() {
+    const tvX = -80;
+    const tvZ = BACK_Z + 10;
+    const consoleTopY = FLOOR_Y + 3 + 8;
+
+    // TV stand/base connecting to console
+    const standMat = new THREE.MeshLambertMaterial({ color: 0x222222 });
+    const stand = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 6), standMat);
+    stand.position.set(tvX, consoleTopY + 1.25, tvZ);
+    this.scene.add(stand);
+
+    // TV bezel (outer frame)
+    const bezelMat = new THREE.MeshLambertMaterial({ color: 0x111111 });
+    const bezel = new THREE.Mesh(new THREE.BoxGeometry(45, 25, 0.8), bezelMat);
+    bezel.position.set(tvX, consoleTopY + 2 + 12.5, tvZ);
+    this.scene.add(bezel);
+
+    // Screen face (inset, slightly lighter)
+    const screenMat = new THREE.MeshLambertMaterial({ color: 0x1a1a2a });
+    const screen = new THREE.Mesh(new THREE.BoxGeometry(42, 22, 0.1), screenMat);
+    screen.position.set(tvX, consoleTopY + 2 + 12.5, tvZ + 0.45);
+    this.scene.add(screen);
   }
 
   // ── Floor Plants (multiple, spread around room) ─────────
