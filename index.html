@@ -195,11 +195,11 @@
 
     /* ── Mode Bar ──────────────────────────────────────── */
     #mode-bar {
+      display: none !important; /* hidden for now — was display:flex */
       position: absolute;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      display: flex;
       gap: 4px;
       background: var(--glass-bg);
       backdrop-filter: blur(var(--glass-blur));

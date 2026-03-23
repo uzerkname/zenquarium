@@ -2,11 +2,14 @@ import * as THREE from 'three';
 import { TANK_WIDTH, TANK_HEIGHT, TANK_DEPTH, CAUSTIC_LIGHTS } from '../constants.js';
 
 export class Lighting {
-  constructor(scene) {
+  constructor(scene, tankGroup) {
     this.scene = scene;
     this.causticLights = [];
     this.tankLights = [];
     this._ledStripMeshes = [];
+
+    // Use tankGroup for tank-local lights, scene for room lights
+    const tg = tankGroup || scene;
 
     // ── Room lights (NOT affected by tank color) ──────────────
 
@@ -42,6 +45,7 @@ export class Lighting {
     this._roomLightIntensities = this._roomLightRefs.map(l => l.intensity);
 
     // ── Caustic lights (animated shimmer inside tank) ─────────
+    // Added to tankGroup so they move/rotate with the tank
 
     const causticColors = [0x5599cc, 0x44aadd, 0x66bbcc, 0x55aacc];
     for (let i = 0; i < CAUSTIC_LIGHTS; i++) {
@@ -51,13 +55,12 @@ export class Lighting {
         TANK_HEIGHT * 0.35,
         (i % 2 === 0 ? 1 : -1) * TANK_DEPTH * 0.2
       );
-      scene.add(light);
+      tg.add(light);
       this.causticLights.push({ light, phase: i * 2.1, baseX: light.position.x, baseZ: light.position.z });
     }
 
     // ── Bright focused tank lights (PointLights under cross-bars) ──
 
-    // Lights positioned just inside the tank top so they illuminate the interior
     const lightY = TANK_HEIGHT / 2 - 1;
     const barZPositions = [-TANK_DEPTH * 0.25, TANK_DEPTH * 0.25];
 
@@ -66,12 +69,12 @@ export class Lighting {
         const lx = (i - 1.5) * (TANK_WIDTH * 0.22);
         const pl = new THREE.PointLight(0xffffff, 1.5, TANK_HEIGHT * 2.5);
         pl.position.set(lx, lightY, bz);
-        scene.add(pl);
+        tg.add(pl);
         this.tankLights.push(pl);
       }
     }
 
-    // ── Shadow SpotLights (2 — one per crossbar, cheap single-face shadows) ──
+    // ── Shadow SpotLights (2 — one per crossbar) ──
     this._shadowSpots = [];
     for (const bz of barZPositions) {
       const spot = new THREE.SpotLight(0xffffff, 10.0, TANK_HEIGHT * 2, Math.PI / 3, 0.5, 1);
@@ -84,13 +87,13 @@ export class Lighting {
       spot.shadow.normalBias = 0.02;
       spot.shadow.camera.near = 1;
       spot.shadow.camera.far = TANK_HEIGHT * 2;
-      scene.add(spot);
-      scene.add(spot.target);
+      tg.add(spot);
+      tg.add(spot.target);
       this._shadowSpots.push(spot);
     }
 
     // ── Build fixture bar assemblies ──────────────────────────
-    this._buildFixtures(scene);
+    this._buildFixtures(tg);
 
     // ── Color interpolation state ────────────────────────────
 
@@ -151,26 +154,26 @@ export class Lighting {
     const d = this._defaults;
     const w = this._isWhite;
 
-    // Tank PointLights — low fill so shadow-casting SpotLights dominate
+    // Tank PointLights
     for (const light of this.tankLights) {
       light.color.copy(c);
       light.intensity = w ? 1.5 : 2.5;
     }
 
-    // Shadow SpotLights — primary illumination (strong for visible fish shadows)
+    // Shadow SpotLights
     for (const spot of this._shadowSpots) {
       spot.color.copy(c);
       spot.intensity = w ? 10.0 : 12.0;
     }
 
-    // LED strips — glow the selected color (high emissive for bloom)
+    // LED strips
     for (const mesh of this._ledStripMeshes) {
       mesh.material.emissive.copy(c);
       mesh.material.emissiveIntensity = w ? 1.5 : 2.0;
       mesh.material.color.copy(c);
     }
 
-    // Sand caustic uniforms — animate time + tint color
+    // Sand caustic uniforms
     if (this._sandUniforms) {
       this._sandUniforms.uTime.value = time;
       this._sandUniforms.uCausticColor.value.set(0x88ccff).lerp(c, w ? 0 : 0.5);
@@ -181,18 +184,18 @@ export class Lighting {
       this._waterMat.color.copy(d.waterColor).lerp(c, w ? 0 : 0.3);
     }
 
-    // Fog + background — slight tint from tank glow spilling out
+    // Fog + background
     const fogTint = c.clone().multiplyScalar(0.15);
     this.scene.fog.color.copy(d.fogColor).lerp(fogTint, w ? 0 : 0.3);
     this.scene.background.copy(d.bgColor).lerp(fogTint, w ? 0 : 0.15);
   }
 
-  _buildFixtures(scene) {
-    this._buildCrossBar(scene, -TANK_DEPTH * 0.25);
-    this._buildCrossBar(scene,  TANK_DEPTH * 0.25);
+  _buildFixtures(parent) {
+    this._buildCrossBar(parent, -TANK_DEPTH * 0.25);
+    this._buildCrossBar(parent,  TANK_DEPTH * 0.25);
   }
 
-  _buildCrossBar(scene, barZ) {
+  _buildCrossBar(parent, barZ) {
     const barY = TANK_HEIGHT / 2 + 3.5;
     const barLen = TANK_WIDTH + 2;
 
@@ -201,9 +204,9 @@ export class Lighting {
     const housingMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
     const housing = new THREE.Mesh(housingGeo, housingMat);
     housing.position.set(0, barY, barZ);
-    scene.add(housing);
+    parent.add(housing);
 
-    // LED emitter strip (underside) — MeshStandardMaterial for bloom-compatible emissive
+    // LED emitter strip
     const ledGeo = new THREE.BoxGeometry(barLen - 4, 0.1, 2.0);
     const ledMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
@@ -214,7 +217,7 @@ export class Lighting {
     });
     const ledMesh = new THREE.Mesh(ledGeo, ledMat);
     ledMesh.position.set(0, barY - 0.45, barZ);
-    scene.add(ledMesh);
+    parent.add(ledMesh);
     this._ledStripMeshes.push(ledMesh);
 
     // Support brackets
@@ -228,22 +231,21 @@ export class Lighting {
       const armGeo = new THREE.BoxGeometry(0.5, armH, 0.5);
       const arm = new THREE.Mesh(armGeo, bracketMat);
       arm.position.set(endX, rimY + armH / 2, barZ);
-      scene.add(arm);
+      parent.add(arm);
 
       const clipTopGeo = new THREE.BoxGeometry(1.5, 0.4, 3.0);
       const clipTop = new THREE.Mesh(clipTopGeo, bracketMat);
       clipTop.position.set(endX, rimY + 0.2, barZ);
-      scene.add(clipTop);
+      parent.add(clipTop);
 
       const gripGeo = new THREE.BoxGeometry(1.2, 2.0, 0.4);
       const gripOuter = new THREE.Mesh(gripGeo, bracketMat);
       gripOuter.position.set(endX + side * 0.4, rimY - 0.8, barZ);
-      scene.add(gripOuter);
+      parent.add(gripOuter);
 
       const gripInner = new THREE.Mesh(gripGeo, bracketMat);
       gripInner.position.set(endX - side * 0.4, rimY - 0.8, barZ);
-      scene.add(gripInner);
+      parent.add(gripInner);
     }
-
   }
 }

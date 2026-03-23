@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { Renderer }            from './renderer/Renderer.js';
 import { AquariumTank }        from './renderer/AquariumTank.js';
 import { WaterEffects }        from './renderer/WaterEffects.js';
@@ -15,12 +16,21 @@ import { Room }                from './renderer/Room.js';
 // --- Bootstrap ---
 const canvas     = document.getElementById('canvas');
 const renderer   = new Renderer(canvas);
-const lighting   = new Lighting(renderer.scene);
-const tank       = new AquariumTank(renderer.scene);
-const water      = new WaterEffects(renderer.scene);
+
+// ── Tank group: all tank-related objects live here ──
+// This lets us position and rotate the entire tank as one unit
+const tankGroup  = new THREE.Group();
+tankGroup.position.set(85, 0, -10);
+tankGroup.rotation.y = Math.PI / 2;   // 90° rotation
+renderer.scene.add(tankGroup);
+
+// Pass tankGroup to tank-related systems (they add children to the group, not scene)
+const lighting   = new Lighting(renderer.scene, tankGroup);
+const tank       = new AquariumTank(tankGroup);
+const water      = new WaterEffects(tankGroup, renderer.scene);
 const gameState  = new GameState();
-const fishSystem = new FishSystem(renderer.scene);
-const decoSystem = new DecorationSystem(renderer.scene);
+const fishSystem = new FishSystem(tankGroup);
+const decoSystem = new DecorationSystem(tankGroup);
 const placement  = new PlacementController(renderer, tank.sandMesh, decoSystem, gameState);
 const room       = new Room(renderer.scene, renderer.camera, renderer.webgl, lighting);
 

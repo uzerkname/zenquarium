@@ -10,6 +10,9 @@ export class PlacementController {
     this.decoSystem  = decoSystem;
     this.gameState   = gameState;
 
+    // The tankGroup is the parent of sandMesh — we need it for local coord conversion
+    this._tankGroup  = sandMesh.parent;
+
     this._active   = false;
     this._typeKey  = null;
     this._rotY     = 0;
@@ -19,6 +22,7 @@ export class PlacementController {
     this._snapped  = null; // {x, z} grid position
     this._canPlace = false;
     this._mouseDown = new THREE.Vector2();
+    this._localPt   = new THREE.Vector3();
 
     window.addEventListener('mousemove', e => this._onMouseMove(e));
     window.addEventListener('pointerdown', e => this._mouseDown.set(e.clientX, e.clientY));
@@ -43,7 +47,8 @@ export class PlacementController {
         obj.material.opacity = 0.55;
       }
     });
-    this.renderer.scene.add(this._ghost);
+    // Add ghost to tankGroup so it's in tank-local space
+    this._tankGroup.add(this._ghost);
 
     document.getElementById('placement-hint').classList.add('visible');
   }
@@ -52,7 +57,7 @@ export class PlacementController {
     if (!this._active) return;
     this._active = false;
     if (this._ghost) {
-      this.renderer.scene.remove(this._ghost);
+      this._tankGroup.remove(this._ghost);
       this._ghost.traverse(obj => { if (obj.isMesh) { obj.geometry.dispose(); obj.material.dispose(); } });
       this._ghost = null;
     }
@@ -74,15 +79,18 @@ export class PlacementController {
     const hits = this._raycaster.intersectObject(this.sandMesh, false);
     if (!hits.length) return;
 
-    const pt = hits[0].point;
-    const gx = Math.round(pt.x / GRID_SIZE);
-    const gz = Math.round(pt.z / GRID_SIZE);
+    // Convert world hit point to tankGroup local coordinates
+    this._localPt.copy(hits[0].point);
+    this._tankGroup.worldToLocal(this._localPt);
+
+    const gx = Math.round(this._localPt.x / GRID_SIZE);
+    const gz = Math.round(this._localPt.z / GRID_SIZE);
     this._snapped = { x: gx, z: gz };
 
     const type = DECO_MAP[this._typeKey];
     this._canPlace = this.decoSystem.isFootprintFree(gx, gz, type);
 
-    // Position ghost
+    // Position ghost in local tank space
     const ox = -(type.footprint.w - 1) * 0.5 * DECO_SCALE;
     const oz = -(type.footprint.d - 1) * 0.5 * DECO_SCALE;
     this._ghost.position.set(

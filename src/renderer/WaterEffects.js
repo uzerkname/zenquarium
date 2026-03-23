@@ -2,13 +2,15 @@ import * as THREE from 'three';
 import { TANK_WIDTH, TANK_HEIGHT, TANK_DEPTH, BUBBLE_COUNT } from '../constants.js';
 
 export class WaterEffects {
-  constructor(scene) {
-    this.scene = scene;
+  constructor(tankGroup, rootScene) {
+    this.scene = tankGroup;
     this._bubbleData = null;
     this._bubbleMesh = null;
 
-    scene.fog = new THREE.FogExp2(0x003050, 0.0004);
-    scene.background = new THREE.Color(0x1a1a28);
+    // Fog and background belong on the root scene, not the tankGroup
+    const rs = rootScene || tankGroup;
+    rs.fog = new THREE.FogExp2(0x003050, 0.0004);
+    rs.background = new THREE.Color(0x1a1a28);
 
     this._createBubbles();
   }
