@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import { buildVoxelGroup } from '../utils/VoxelGeometry.js';
+import { upscaleAndSmooth } from '../utils/VoxelUpscale.js';
 import { DECO_MAP } from './types/index.js';
 import { TANK_HEIGHT, TANK_WIDTH, TANK_DEPTH, GRID_SIZE, DECO_SCALE, SAND_HEIGHT } from '../constants.js';
+
+const DECO_UPSCALE = 2;
 
 export class PlacementController {
   constructor(renderer, sandMesh, decoSystem, gameState) {
@@ -38,7 +41,7 @@ export class PlacementController {
     this._active  = true;
 
     const type = DECO_MAP[typeKey];
-    this._ghost = buildVoxelGroup(type.voxels);
+    this._ghost = buildVoxelGroup(upscaleAndSmooth(type.voxels, DECO_UPSCALE), 0.5);
     this._ghost.scale.setScalar(DECO_SCALE);
     this._ghost.traverse(obj => {
       if (obj.isMesh) {

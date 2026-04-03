@@ -9,10 +9,10 @@ export class Renderer {
   constructor(canvas) {
     this.scene = new THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1200);
+    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2500);
     // Tank is at (85, 0, -10), rotated 90°. Camera views from the left/front.
-    this.camera.position.set(20, 5, 40);
-    this.camera.lookAt(85, -2, -10);
+    this.camera.position.set(175, 5, 315);
+    this.camera.lookAt(240, -2, 265);
 
     this.webgl = new THREE.WebGLRenderer({
       canvas,
@@ -41,13 +41,13 @@ export class Renderer {
 
     // Orbit controls — user can orbit around the tank
     this.controls = new OrbitControls(this.camera, this.webgl.domElement);
-    this.controls.target.set(85, -2, -10);
+    this.controls.target.set(240, -2, 265);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.08;
     this.controls.minDistance = 20;
-    this.controls.maxDistance = 110;
+    this.controls.maxDistance = 300;
     this.controls.maxPolarAngle = Math.PI * 0.55;   // can't go below floor
-    this.controls.minPolarAngle = Math.PI * 0.22;   // can't go above ceiling
+    this.controls.minPolarAngle = Math.PI * 0.1;    // can't go above ceiling
     this.controls.enablePan = false;
 
     window.addEventListener('resize', () => this._onResize());

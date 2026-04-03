@@ -20,7 +20,7 @@ const renderer   = new Renderer(canvas);
 // ── Tank group: all tank-related objects live here ──
 // This lets us position and rotate the entire tank as one unit
 const tankGroup  = new THREE.Group();
-tankGroup.position.set(85, 0, -10);
+tankGroup.position.set(240, 0, 265);
 tankGroup.rotation.y = Math.PI / 2;   // 90° rotation
 renderer.scene.add(tankGroup);
 
@@ -74,6 +74,9 @@ if (roomToggle) {
     roomToggle.classList.toggle('off', !isOn);
   });
 }
+
+// DEBUG: expose for reading current state
+window.__gameState = gameState;
 
 // --- Game Loop ---
 renderer.setAnimationLoop((delta, time) => {

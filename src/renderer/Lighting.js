@@ -31,9 +31,12 @@ export class Lighting {
       [-120, 60, -40],
       [120, 60, -40],
       [0, 60, -100],
+      [300, 60, 200],
+      [300, 60, 500],
+      [0, 60, 400],
     ];
     for (const [rx, ry, rz] of roomFillPositions) {
-      const roomFill = new THREE.PointLight(0xffe8c0, 0.15, 400);
+      const roomFill = new THREE.PointLight(0xffe8c0, 0.15, 800);
       roomFill.position.set(rx, ry, rz);
       scene.add(roomFill);
       this._roomFillLights.push(roomFill);

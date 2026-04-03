@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { buildVoxelGroup, buildFishGroup } from '../utils/VoxelGeometry.js';
+import { upscaleAndSmooth } from '../utils/VoxelUpscale.js';
 import { randomTarget, reached, wallRepulsion, clampToBounds } from './FishAI.js';
 
 const _up    = new THREE.Vector3(0, 1, 0);
@@ -8,17 +9,22 @@ const _quat  = new THREE.Quaternion();
 const _yawQ  = new THREE.Quaternion();
 const _pitchQ = new THREE.Quaternion();
 
+const FISH_UPSCALE = 2;
+
 export class FishEntity {
   constructor(species) {
     this.species = species;
 
+    const voxels = upscaleAndSmooth(species.voxels, FISH_UPSCALE);
+    const voxelSize = species.voxelSize;
+
     // Build body + tail as separate groups for fin animation
     if (species.tailCutoff !== undefined) {
-      const { group, tailPivot } = buildFishGroup(species.voxels, species.tailCutoff, species.voxelSize);
+      const { group, tailPivot } = buildFishGroup(voxels, species.tailCutoff * FISH_UPSCALE, voxelSize);
       this.group = group;
       this.tailPivot = tailPivot;
     } else {
-      this.group = buildVoxelGroup(species.voxels, species.voxelSize);
+      this.group = buildVoxelGroup(voxels, voxelSize);
       this.tailPivot = null;
     }
 

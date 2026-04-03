@@ -9,7 +9,7 @@ export class WaterEffects {
 
     // Fog and background belong on the root scene, not the tankGroup
     const rs = rootScene || tankGroup;
-    rs.fog = new THREE.FogExp2(0x003050, 0.0004);
+    rs.fog = new THREE.FogExp2(0x003050, 0.00015);
     rs.background = new THREE.Color(0x1a1a28);
 
     this._createBubbles();
