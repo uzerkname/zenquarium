@@ -78,6 +78,36 @@ if (roomToggle) {
 // DEBUG: expose for reading current state
 window.__gameState = gameState;
 
+// ── Base layout: one of each fish ──
+gameState.addFish('clownfish');
+gameState.addFish('angelfish');
+gameState.addFish('betta');
+gameState.addFish('pufferfish');
+gameState.addFish('tang');
+
+// ── Base layout: decorations ──
+// Back row (far from camera)
+gameState.addDecoration('castle',     { x:  0, z: -18 });
+gameState.addDecoration('rock_large', { x: -30, z: -14 });
+gameState.addDecoration('anemone',    { x:  25, z: -18 });
+gameState.addDecoration('seaweed',    { x: -40, z: -12 });
+gameState.addDecoration('seaweed',    { x: -18, z: -14 });
+gameState.addDecoration('seaweed',    { x:  18, z: -16 });
+
+// Middle row
+gameState.addDecoration('treasure_chest', { x: -35, z: -3 });
+gameState.addDecoration('coral_brain',    { x:  35, z: -2 });
+gameState.addDecoration('anchor',         { x: -10, z:  2 });
+gameState.addDecoration('barrel',         { x:  15, z:  0 });
+gameState.addDecoration('seaweed',        { x:  25, z:  3 });
+
+// Front row (close to camera)
+gameState.addDecoration('coral_tube',   { x: -30, z: 10 });
+gameState.addDecoration('diver_helmet', { x:   5, z: 12 });
+gameState.addDecoration('rock_small',   { x:  30, z: 12 });
+gameState.addDecoration('seaweed',      { x: -15, z: 14 });
+gameState.addDecoration('seaweed',      { x:  20, z: 10 });
+
 // --- Game Loop ---
 renderer.setAnimationLoop((delta, time) => {
   water.update(delta);

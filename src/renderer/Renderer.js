@@ -11,8 +11,8 @@ export class Renderer {
 
     this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2500);
     // Tank is at (85, 0, -10), rotated 90°. Camera views from the left/front.
-    this.camera.position.set(175, 5, 315);
-    this.camera.lookAt(240, -2, 265);
+    this.camera.position.set(130, 8, 265);
+    this.camera.lookAt(240, -5, 265);
 
     this.webgl = new THREE.WebGLRenderer({
       canvas,
@@ -41,7 +41,7 @@ export class Renderer {
 
     // Orbit controls — user can orbit around the tank
     this.controls = new OrbitControls(this.camera, this.webgl.domElement);
-    this.controls.target.set(240, -2, 265);
+    this.controls.target.set(240, -5, 265);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.08;
     this.controls.minDistance = 20;
