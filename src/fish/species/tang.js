@@ -185,7 +185,7 @@ export default {
   key: 'tang',
   name: 'Blue Tang',
   emoji: '\uD83D\uDC99',
-  speed: 5.0,
+  speed: 12.0,
   turnSpeed: 2.2,
   scale: 0.42,
   voxelSize: 0.5,

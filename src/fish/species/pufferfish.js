@@ -213,7 +213,7 @@ export default {
   key: 'pufferfish',
   name: 'Pufferfish',
   emoji: '\uD83D\uDC21',
-  speed: 2.5,
+  speed: 6.0,
   turnSpeed: 1.0,
   scale: 0.50,
   voxelSize: 0.5,

@@ -129,8 +129,8 @@ export class FishEntity {
     // --- Tail fin animation ---
     if (this.tailPivot) {
       const swimFactor = Math.min(speed / sp.speed, 1.5);
-      const freq = 6 + swimFactor * 6;   // faster flap when swimming faster
-      const amp  = 0.2 + swimFactor * 0.2; // bigger sweep when swimming faster
+      const freq = 2 + swimFactor * 5.3;  // idle ~2 Hz, max ~10
+      const amp  = 0.08 + swimFactor * 0.3;
       this.tailPivot.rotation.y = Math.sin(time * freq + this._phase) * amp;
     }
   }

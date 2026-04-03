@@ -177,7 +177,7 @@ export default {
   key: 'betta',
   name: 'Betta',
   emoji: '\uD83D\uDD34',
-  speed: 3.5,
+  speed: 9.0,
   turnSpeed: 1.6,
   scale: 0.42,
   voxelSize: 0.5,

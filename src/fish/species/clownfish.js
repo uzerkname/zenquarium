@@ -213,7 +213,7 @@ export default {
   key: 'clownfish',
   name: 'Clownfish',
   emoji: '\uD83D\uDC20',
-  speed: 4.0,
+  speed: 10.0,
   turnSpeed: 2.0,
   scale: 0.45,
   voxelSize: 0.5,

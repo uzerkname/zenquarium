@@ -158,7 +158,7 @@ export default {
   key: 'angelfish',
   name: 'Angelfish',
   emoji: '🐡',
-  speed: 3.0,
+  speed: 8.0,
   turnSpeed: 1.4,
   scale: 0.40,
   voxelSize: 0.5,
