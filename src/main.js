@@ -29,8 +29,8 @@ const lighting   = new Lighting(renderer.scene, tankGroup);
 const tank       = new AquariumTank(tankGroup);
 const water      = new WaterEffects(tankGroup, renderer.scene);
 const gameState  = new GameState();
-const fishSystem = new FishSystem(tankGroup);
 const decoSystem = new DecorationSystem(tankGroup);
+const fishSystem = new FishSystem(tankGroup, decoSystem);
 const placement  = new PlacementController(renderer, tank.sandMesh, decoSystem, gameState);
 const room       = new Room(renderer.scene, renderer.camera, renderer.webgl, lighting);
 

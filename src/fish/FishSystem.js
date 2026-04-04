@@ -3,8 +3,9 @@ import { FishEntity } from './FishEntity.js';
 import { SPECIES_MAP } from './species/index.js';
 
 export class FishSystem {
-  constructor(scene) {
+  constructor(scene, decoSystem) {
     this.scene = scene;
+    this._decoSystem = decoSystem;
     this._entities = new Map(); // id → FishEntity
 
     eventBus.on('fish:added',   data => this._onAdded(data));
@@ -14,7 +15,7 @@ export class FishSystem {
   _onAdded({ id, speciesKey }) {
     const species = SPECIES_MAP[speciesKey];
     if (!species) return;
-    const entity = new FishEntity(species);
+    const entity = new FishEntity(species, this._decoSystem);
     this.scene.add(entity.group);
     this._entities.set(id, entity);
   }

@@ -47,6 +47,39 @@ export class DecorationSystem {
     return this._occupied.has(`${gx},${gz}`);
   }
 
+  /** Check if any cell within margin of (x,z) world coords is occupied */
+  isNearDecoration(x, z, margin = 2) {
+    const gx = Math.round(x);
+    const gz = Math.round(z);
+    for (let dx = -margin; dx <= margin; dx++) {
+      for (let dz = -margin; dz <= margin; dz++) {
+        if (this._occupied.has(`${gx + dx},${gz + dz}`)) return true;
+      }
+    }
+    return false;
+  }
+
+  /** Get repulsion vector pushing away from nearby decorations */
+  decoRepulsion(x, z, radius = 4) {
+    let fx = 0, fz = 0;
+    const gx = Math.round(x);
+    const gz = Math.round(z);
+    for (let dx = -radius; dx <= radius; dx++) {
+      for (let dz = -radius; dz <= radius; dz++) {
+        if (!this._occupied.has(`${gx + dx},${gz + dz}`)) continue;
+        const ox = x - (gx + dx);
+        const oz = z - (gz + dz);
+        const dist = Math.sqrt(ox * ox + oz * oz) + 0.1;
+        if (dist < radius) {
+          const strength = (radius - dist) / radius;
+          fx += (ox / dist) * strength;
+          fz += (oz / dist) * strength;
+        }
+      }
+    }
+    return { x: fx, y: 0, z: fz };
+  }
+
   isFootprintFree(gx, gz, type) {
     for (let dx = 0; dx < type.footprint.w; dx++) {
       for (let dz = 0; dz < type.footprint.d; dz++) {

@@ -12,8 +12,9 @@ const _pitchQ = new THREE.Quaternion();
 const FISH_UPSCALE = 2;
 
 export class FishEntity {
-  constructor(species) {
+  constructor(species, decoSystem) {
     this.species = species;
+    this._decoSystem = decoSystem;
 
     const voxels = upscaleAndSmooth(species.voxels, FISH_UPSCALE);
     const voxelSize = species.voxelSize;
@@ -36,7 +37,7 @@ export class FishEntity {
     });
 
     // Start at a random position
-    const t = randomTarget();
+    const t = this._safeTarget();
     this.group.position.set(t.x, t.y, t.z);
 
     // Heading-based movement (fish always swims forward)
@@ -45,10 +46,20 @@ export class FishEntity {
     this.currentSpeed = species.speed * 0.5;
     this.vel = new THREE.Vector3();
 
-    this.target  = randomTarget();
+    this.target  = this._safeTarget();
     this.idleTimer = 0;
+    this._stuckTimer = 0;
     this.state = 'wander'; // 'wander' | 'idle'
     this._phase = Math.random() * Math.PI * 2;
+  }
+
+  /** Pick a random target that isn't inside a decoration cluster */
+  _safeTarget() {
+    for (let i = 0; i < 8; i++) {
+      const t = randomTarget();
+      if (!this._decoSystem?.isNearDecoration(t.x, t.z, 2)) return t;
+    }
+    return randomTarget(); // fallback if all attempts fail
   }
 
   update(delta, time) {
@@ -64,16 +75,23 @@ export class FishEntity {
       desiredSpeed = 0;
       if (this.idleTimer <= 0) {
         this.state = 'wander';
-        this.target = randomTarget();
+        this.target = this._safeTarget();
       }
     } else {
+      this._stuckTimer += delta;
+
       if (reached(pos, this.target)) {
+        this._stuckTimer = 0;
         if (Math.random() < 0.2) {
           this.state = 'idle';
           this.idleTimer = 0.4 + Math.random() * 1.2;
         } else {
-          this.target = randomTarget();
+          this.target = this._safeTarget();
         }
+      } else if (this._stuckTimer > 4) {
+        // Stuck too long — pick a new target
+        this._stuckTimer = 0;
+        this.target = this._safeTarget();
       }
 
       const dx = this.target.x - pos.x;
@@ -82,8 +100,18 @@ export class FishEntity {
 
       const wall = wallRepulsion(pos);
 
-      const wx = dx + wall.x * 5;
-      const wz = dz + wall.z * 5;
+      // Decoration repulsion (only near the sand floor)
+      let decoFx = 0, decoFz = 0;
+      const sandY = -25; // approx sand surface
+      if (this._decoSystem && pos.y < sandY + 12) {
+        const deco = this._decoSystem.decoRepulsion(pos.x, pos.z, 4);
+        const yFade = Math.max(0, 1 - (pos.y - sandY) / 12);
+        decoFx = deco.x * 3 * yFade;
+        decoFz = deco.z * 3 * yFade;
+      }
+
+      const wx = dx + wall.x * 5 + decoFx;
+      const wz = dz + wall.z * 5 + decoFz;
       const wy = dy * 0.35 + wall.y * 5;
 
       desiredYaw = Math.atan2(wz, wx);
