@@ -1,5 +1,7 @@
-// Angelfish (Pterophyllum scalare) — tall diamond/disc body, long trailing fins, black vertical stripes
-// High-resolution voxel design: voxelSize 0.5, ~350 voxels
+// Angelfish (Pterophyllum scalare) — realistic proportions
+// Real angelfish: tall disc body ~1:1 L:H, extremely laterally compressed
+// Very tall dorsal and trailing ventral fins
+// x = forward (nose at high x), y = up/down, z = left/right
 
 function generate() {
   const map = new Map();
@@ -18,24 +20,23 @@ function generate() {
     }
   }
 
-  // ── Body — tall silver disc ──────────────────────────────
-  // Short in x, very tall in y, thin in z (laterally compressed)
-  // x: -4 (tail base) to 7 (snout), center at y=0
-
+  // ── Body — tall silver disc ──────────────────────────────────
+  // 12 units long (x=7 to x=-4), max yR=5, max zR=1-2
+  // Extremely laterally compressed — thinner head
   ellipse(7,  0, 1, 0, 0xe0e0e0);   // snout tip
   ellipse(6,  0, 2, 1, 0xdadada);   // face
-  ellipse(5,  0, 4, 2, 0xdadada);   // head
+  ellipse(5,  0, 3, 1, 0xdadada);   // head (thin)
   ellipse(4,  0, 5, 2, 0xdadada);   // front body
   ellipse(3,  0, 5, 2, 0xd0d0d0);   // body
   ellipse(2,  0, 5, 2, 0xd0d0d0);   // body
   ellipse(1,  0, 5, 2, 0xd0d0d0);   // body
   ellipse(0,  0, 4, 2, 0xc8c8c8);   // rear body
-  ellipse(-1, 0, 4, 1, 0xc8c8c8);   // rear body
-  ellipse(-2, 0, 3, 1, 0xc8c8c8);   // tapering
+  ellipse(-1, 0, 3, 1, 0xc8c8c8);   // rear body
+  ellipse(-2, 0, 2, 1, 0xc8c8c8);   // tapering
   ellipse(-3, 0, 2, 1, 0xc0c0c0);   // tail transition
-  ellipse(-4, 0, 2, 1, 0xc0c0c0);   // tail base
+  ellipse(-4, 0, 1, 0, 0xc0c0c0);   // tail base
 
-  // ── Eyes ─────────────────────────────────────────────────
+  // ── Eyes ─────────────────────────────────────────────────────
   set(6, 2,  1, 0x111111);  // left pupil
   set(6, 2, -1, 0x111111);  // right pupil
   // Orange iris ring
@@ -44,8 +45,7 @@ function generate() {
   set(6, 3, -1, 0xff9900);
   set(6, 1, -1, 0xff9900);
 
-  // ── Vertical Black Stripes (key angelfish feature) ───────
-  // 3 bold vertical stripes on outermost z-faces at specific x columns
+  // ── Vertical Black Stripes ───────────────────────────────────
   const stripeColor = 0x1a1a1a;
 
   function paintStripe(xPos) {
@@ -69,20 +69,17 @@ function generate() {
 
   // Stripe 1: through the eye at x=5
   paintStripe(5);
-
   // Stripe 2: mid-body at x=2
   paintStripe(2);
-
   // Stripe 3: rear body at x=-1
   paintStripe(-1);
 
-  // ── Dorsal Fin (very tall, triangular) ───────────────────
-  // Rises above the body, z=0 only, triangular shape
+  // ── Dorsal Fin (very tall, triangular) ───────────────────────
   const dorsalFin = [
     [4, 6,  7],
     [3, 6,  9],
     [2, 6,  11],
-    [1, 6,  12],   // tallest point
+    [1, 6,  12],
     [0, 5,  9],
   ];
   for (const [x, yStart, yEnd] of dorsalFin) {
@@ -98,13 +95,13 @@ function generate() {
     if (map.has(`2,${y},0`)) set(2, y, 0, stripeColor);
   }
 
-  // ── Ventral/Anal Fin (very long, trailing downward) ──────
+  // ── Ventral/Anal Fin (very long, trailing) ───────────────────
   const ventralFin = [
     [3, -7,  -6],
     [2, -10, -6],
-    [1, -12, -6],   // longest trailing point
+    [1, -12, -6],
     [0, -9,  -5],
-    [-1, -7, -5],
+    [-1, -7, -4],
   ];
   for (const [x, yEnd, yStart] of ventralFin) {
     for (let y = yEnd; y <= yStart; y++) {
@@ -118,20 +115,18 @@ function generate() {
   for (let y = -10; y <= -6; y++) {
     if (map.has(`2,${y},0`)) set(2, y, 0, stripeColor);
   }
-  // Stripe extensions into ventral fin at x=-1
-  for (let y = -7; y <= -5; y++) {
+  // Stripe extensions at x=-1
+  for (let y = -7; y <= -4; y++) {
     if (map.has(`-1,${y},0`)) set(-1, y, 0, stripeColor);
   }
 
-  // ── Pelvic Fins (long trailing threads) ──────────────────
-  // Thin single-voxel columns at z=±1, hanging from x=3
+  // ── Pelvic Fins (long trailing threads) ──────────────────────
   for (let y = -6; y >= -13; y--) {
     set(3, y,  1, 0xcccccc);
     set(3, y, -1, 0xcccccc);
   }
 
-  // ── Tail Fin (forked, x <= tailCutoff of -5) ─────────────
-  // Two prongs spreading in y, gap at y=0 for fork effect
+  // ── Tail Fin (forked) ────────────────────────────────────────
   for (let y = 1; y <= 3; y++) set(-5, y, 0, 0xc0c0c0);
   for (let y = -3; y <= -1; y++) set(-5, y, 0, 0xc0c0c0);
   set(-5, 1, 1, 0xc0c0c0); set(-5, 1, -1, 0xc0c0c0);
@@ -145,7 +140,7 @@ function generate() {
   set(-7, 3, 0, 0xb0b0b0); set(-7, 4, 0, 0xb0b0b0); set(-7, 5, 0, 0xb0b0b0);
   set(-7, -3, 0, 0xb0b0b0); set(-7, -4, 0, 0xb0b0b0); set(-7, -5, 0, 0xb0b0b0);
 
-  // ── Pectoral Fins (small, on sides) ──────────────────────
+  // ── Pectoral Fins (small, on sides) ──────────────────────────
   set(3, 0,  3, 0xcccccc); set(3, -1, 3, 0xcccccc);
   set(2, 0,  3, 0xc8c8c8); set(2, -1, 3, 0xc8c8c8);
   set(3, 0, -3, 0xcccccc); set(3, -1, -3, 0xcccccc);
@@ -157,7 +152,7 @@ function generate() {
 export default {
   key: 'angelfish',
   name: 'Angelfish',
-  emoji: '🐡',
+  emoji: '\uD83D\uDC21',
   speed: 8.0,
   turnSpeed: 1.4,
   scale: 0.40,

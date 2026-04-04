@@ -1,5 +1,5 @@
-// Betta (Betta splendens) — high-res ~400 voxels, voxelSize 0.5
-// Dramatic flowing fins that dwarf the compact body
+// Betta (Betta splendens) — realistic proportions
+// Real betta: compact torpedo body (L:H ≈ 3:1), dramatic flowing fins
 // x = forward (nose at high x), y = up/down, z = left/right
 
 function generate() {
@@ -19,26 +19,29 @@ function generate() {
     }
   }
 
-  // ── Main body (deep red, compact) ──────────────────────────────
-  set(10, 0, 0, 0xcc3344);          // snout tip
-  ellipse(9, 0, 1, 1, 0xbb1133);    // face
-  ellipse(8, 0, 2, 1, 0xbb1133);    // head
-  ellipse(7, 0, 3, 2, 0xbb1133);    // body
-  ellipse(6, 0, 3, 2, 0xcc2244);    // body widest
-  ellipse(5, 0, 3, 2, 0xcc2244);    // body
-  ellipse(4, 0, 3, 2, 0xbb1133);    // body
-  ellipse(3, 0, 2, 2, 0x991122);    // body tapering
-  ellipse(2, 0, 2, 1, 0x991122);    // body tapering
-  ellipse(1, 0, 1, 1, 0x991122);    // taper
-  ellipse(0, 0, 1, 0, 0x991122);    // taper
+  // ── Main body (deep red, torpedo shape) ────────────────────────
+  // 13 units long (x=11 to x=-1), max yR=2, max zR=2
+  // L:H:W = 13:4:4 ≈ 3.25:1:1
+  set(11, 0, 0, 0xcc3344);          // snout tip
+  ellipse(10, 0, 1, 0, 0xbb1133);   // snout
+  ellipse(9,  0, 1, 1, 0xbb1133);   // face
+  ellipse(8,  0, 2, 1, 0xbb1133);   // head
+  ellipse(7,  0, 2, 2, 0xbb1133);   // body
+  ellipse(6,  0, 2, 2, 0xcc2244);   // body widest
+  ellipse(5,  0, 2, 2, 0xcc2244);   // body
+  ellipse(4,  0, 2, 2, 0xbb1133);   // body
+  ellipse(3,  0, 2, 1, 0x991122);   // tapering
+  ellipse(2,  0, 1, 1, 0x991122);   // taper
+  ellipse(1,  0, 1, 1, 0x991122);   // taper
+  ellipse(0,  0, 1, 0, 0x991122);   // taper
   set(-1, 0, 0, 0x991122);          // tail base
 
   // ── Iridescent blue-green sheen on body sides ──────────────────
   for (let x = 8; x >= 3; x--) {
     let yR, zR;
     if (x === 8) { yR = 2; zR = 1; }
-    else if (x >= 4 && x <= 7) { yR = 3; zR = 2; }
-    else { yR = 2; zR = 2; }
+    else if (x >= 4 && x <= 7) { yR = 2; zR = 2; }
+    else { yR = 2; zR = 1; }
 
     const color = x >= 7 ? 0x4477cc : x >= 5 ? 0x3366bb : 0x44aacc;
 
@@ -53,21 +56,20 @@ function generate() {
   }
 
   // ── Eyes ────────────────────────────────────────────────────────
-  set(9, 1, 1, 0x111111);    // left eye
-  set(9, 1, -1, 0x111111);   // right eye
+  set(10, 1, 1, 0x111111);    // left eye
+  set(10, 1, -1, 0x111111);   // right eye
 
   // ── Snout / mouth ──────────────────────────────────────────────
-  set(10, -1, 0, 0xcc3344);  // upturned mouth
+  set(11, -1, 0, 0xcc3344);   // upturned mouth
 
   // ── Dorsal fin (MASSIVE flowing) z=0 only ──────────────────────
   const dorsalProfile = [
-    // [x, bodyTop, finHeight]
-    [7, 3, 1],
-    [6, 3, 2],
-    [5, 3, 4],
-    [4, 3, 5],
+    [7, 2, 1],
+    [6, 2, 2],
+    [5, 2, 4],
+    [4, 2, 5],
     [3, 2, 6],
-    [2, 2, 5],
+    [2, 1, 5],
     [1, 1, 4],
     [0, 1, 3],
     [-1, 0, 2],
@@ -88,11 +90,10 @@ function generate() {
 
   // ── Anal / ventral fin (MASSIVE flowing below body) z=0 only ───
   const analProfile = [
-    // [x, bodyBottom, finDepth]
-    [5, -3, 2],
-    [4, -3, 3],
+    [5, -2, 2],
+    [4, -2, 3],
     [3, -2, 5],
-    [2, -2, 6],
+    [2, -1, 6],
     [1, -1, 5],
     [0, -1, 4],
     [-1, 0, 3],
@@ -112,9 +113,7 @@ function generate() {
   }
 
   // ── Tail fan (HUGE halfmoon) — x <= -2 ─────────────────────────
-  // Wispy lacy fan: z=0 spine always drawn, edges drawn, interior sparse
   const tailSlices = [
-    // [x, yRange, zRange]
     [-2, 3, 1],
     [-3, 4, 2],
     [-4, 5, 3],
@@ -124,21 +123,18 @@ function generate() {
   ];
 
   for (const [x, yRange, zRange] of tailSlices) {
-    const dist = Math.abs(x + 2); // 0 at base, 5 at tips
+    const dist = Math.abs(x + 2);
     for (let y = -yRange; y <= yRange; y++) {
       for (let z = -zRange; z <= zRange; z++) {
         const isEdgeY = Math.abs(y) >= yRange;
         const isEdgeZ = Math.abs(z) >= zRange;
         const isSpine = z === 0;
 
-        // Lacy interior: keep edges, spine, and scattered voxels
         if (!isEdgeY && !isEdgeZ && !isSpine) {
-          // Keep only ~1 in 4 interior voxels for wispy flowing look
           const hash = ((Math.abs(y) * 7 + Math.abs(z) * 13 + Math.abs(x) * 3) % 4);
           if (hash !== 0) continue;
         }
 
-        // Color gradient
         const edgeness = Math.max(Math.abs(y) / yRange, zRange > 0 ? Math.abs(z) / zRange : 0);
         const t = Math.max(dist / 5, edgeness);
         let color;
@@ -154,21 +150,19 @@ function generate() {
   }
 
   // ── Pectoral fins (long, flowing, extend in z and droop) ───────
-  // Right pectoral (positive z)
-  set(6, 0, 3, 0xff44aa); set(6, -1, 3, 0xff44aa);
-  set(5, -1, 3, 0xff55bb); set(5, -1, 4, 0xff55bb);
-  set(5, -2, 3, 0xff55bb); set(5, -2, 4, 0xff55bb);
-  set(4, -2, 4, 0xff66cc); set(4, -2, 5, 0xff66cc);
-  set(4, -3, 4, 0xff66cc); set(4, -3, 5, 0xff66cc);
-  set(3, -3, 5, 0xff88ee); set(3, -3, 6, 0xff88ee);
+  set(7, 0, 3, 0xff44aa); set(7, -1, 3, 0xff44aa);
+  set(6, -1, 3, 0xff55bb); set(6, -1, 4, 0xff55bb);
+  set(6, -2, 3, 0xff55bb); set(6, -2, 4, 0xff55bb);
+  set(5, -2, 4, 0xff66cc); set(5, -2, 5, 0xff66cc);
+  set(5, -3, 4, 0xff66cc); set(5, -3, 5, 0xff66cc);
+  set(4, -3, 5, 0xff88ee); set(4, -3, 6, 0xff88ee);
 
-  // Left pectoral (negative z)
-  set(6, 0, -3, 0xff44aa); set(6, -1, -3, 0xff44aa);
-  set(5, -1, -3, 0xff55bb); set(5, -1, -4, 0xff55bb);
-  set(5, -2, -3, 0xff55bb); set(5, -2, -4, 0xff55bb);
-  set(4, -2, -4, 0xff66cc); set(4, -2, -5, 0xff66cc);
-  set(4, -3, -4, 0xff66cc); set(4, -3, -5, 0xff66cc);
-  set(3, -3, -5, 0xff88ee); set(3, -3, -6, 0xff88ee);
+  set(7, 0, -3, 0xff44aa); set(7, -1, -3, 0xff44aa);
+  set(6, -1, -3, 0xff55bb); set(6, -1, -4, 0xff55bb);
+  set(6, -2, -3, 0xff55bb); set(6, -2, -4, 0xff55bb);
+  set(5, -2, -4, 0xff66cc); set(5, -2, -5, 0xff66cc);
+  set(5, -3, -4, 0xff66cc); set(5, -3, -5, 0xff66cc);
+  set(4, -3, -5, 0xff88ee); set(4, -3, -6, 0xff88ee);
 
   return [...map.values()];
 }
@@ -179,7 +173,7 @@ export default {
   emoji: '\uD83D\uDD34',
   speed: 9.0,
   turnSpeed: 1.6,
-  scale: 0.42,
+  scale: 0.45,
   voxelSize: 0.5,
   tailCutoff: -2,
   voxels: generate(),
