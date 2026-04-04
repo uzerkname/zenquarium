@@ -19,7 +19,8 @@ const CHEST_HINGE_Z = 8 * DECO_UPSCALE; // back edge of lid
 export class DecorationEntity {
   constructor(type, position, rotY = 0) {
     this.type = type;
-    this.isAnimated = type.key === 'seaweed';
+    const SWAY_TYPES = new Set(['seaweed', 'kelp', 'grass', 'ludwigia', 'fern']);
+    this.isAnimated = SWAY_TYPES.has(type.key);
     this.isChest = type.key === 'treasure_chest';
     this._segments = [];
     this._swayPhase = position.x * 0.7 + position.z * 0.3;

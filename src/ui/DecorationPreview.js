@@ -22,7 +22,7 @@ export function generatePreviews() {
 
   // Isometric-ish orthographic camera
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
-  camera.position.set(1, 0.8, 1).normalize().multiplyScalar(50);
+  camera.position.set(-1, 0.8, -1).normalize().multiplyScalar(50);
   camera.lookAt(0, 0, 0);
 
   // Lighting — soft ambient + directional key

@@ -40,7 +40,7 @@ export class Room {
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(roomW, roomD), floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.position.set(cx, floorY, cz);
-    floor.receiveShadow = true;
+    floor.receiveShadow = false;
     this.scene.add(floor);
 
     const ceil = new THREE.Mesh(new THREE.PlaneGeometry(roomW, roomD), ceilMat);
@@ -112,7 +112,7 @@ export class Room {
       darkWood
     );
     body.position.set(TX, ROOM_FLOOR_Y + legH + bodyH / 2, TZ);
-    body.receiveShadow = true;
+    body.receiveShadow = false;
     this.scene.add(body);
 
     // Top surface with slight overhang
