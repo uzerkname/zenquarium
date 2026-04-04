@@ -79,7 +79,7 @@ export class DecorationEntity {
 
   _initBubbles() {
     this._bubbles = [];
-    const geo = new THREE.SphereGeometry(0.5, 6, 6);
+    const sizes = [0.6, 0.8, 1.0, 1.2, 1.4, 0.7, 0.9, 1.1];
     const baseMat = new THREE.MeshPhongMaterial({
       color: 0xaaddff,
       transparent: true,
@@ -88,11 +88,12 @@ export class DecorationEntity {
     });
 
     for (let i = 0; i < 8; i++) {
+      const geo = new THREE.BoxGeometry(sizes[i], sizes[i], sizes[i]);
       const mesh = new THREE.Mesh(geo, baseMat.clone());
       mesh.visible = false;
       this._content.add(mesh);
       this._bubbles.push({
-        mesh, active: false, vy: 0, vx: 0, vz: 0,
+        mesh, geo, active: false, vy: 0, vx: 0, vz: 0,
         life: 0, maxLife: 0, baseScale: 1,
       });
     }
