@@ -39,12 +39,11 @@ export class FishEntity {
     const t = randomTarget();
     this.group.position.set(t.x, t.y, t.z);
 
-    // Velocity
-    this.vel = new THREE.Vector3(
-      (Math.random() - 0.5) * 0.5,
-      (Math.random() - 0.5) * 0.1,
-      (Math.random() - 0.5) * 0.5
-    );
+    // Heading-based movement (fish always swims forward)
+    this.heading = Math.random() * Math.PI * 2;     // yaw in radians
+    this.pitch   = 0;
+    this.currentSpeed = species.speed * 0.5;
+    this.vel = new THREE.Vector3();
 
     this.target  = randomTarget();
     this.idleTimer = 0;
@@ -56,16 +55,18 @@ export class FishEntity {
     const pos = this.group.position;
     const sp  = this.species;
 
-    // Idle state — pause briefly
+    let desiredYaw   = this.heading;
+    let desiredPitch = 0;
+    let desiredSpeed = sp.speed;
+
     if (this.state === 'idle') {
       this.idleTimer -= delta;
-      this.vel.multiplyScalar(0.92);
+      desiredSpeed = 0;
       if (this.idleTimer <= 0) {
         this.state = 'wander';
         this.target = randomTarget();
       }
     } else {
-      // Check if reached target
       if (reached(pos, this.target)) {
         if (Math.random() < 0.2) {
           this.state = 'idle';
@@ -75,30 +76,46 @@ export class FishEntity {
         }
       }
 
-      // Desired direction toward target
       const dx = this.target.x - pos.x;
       const dy = this.target.y - pos.y;
       const dz = this.target.z - pos.z;
-      const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
 
-      // Wall repulsion
       const wall = wallRepulsion(pos);
 
-      const desiredX = dx / len + wall.x * 2.5;
-      // Dampen vertical so fish mostly swim horizontally — more natural
-      const desiredY = (dy / len) * 0.35 + wall.y * 2.5;
-      const desiredZ = dz / len + wall.z * 2.5;
+      const wx = dx + wall.x * 5;
+      const wz = dz + wall.z * 5;
+      const wy = dy * 0.35 + wall.y * 5;
 
-      // Smoothly steer velocity
-      const steer = sp.turnSpeed * delta;
-      this.vel.x += (desiredX * sp.speed - this.vel.x) * steer;
-      this.vel.y += (desiredY * sp.speed - this.vel.y) * steer;
-      this.vel.z += (desiredZ * sp.speed - this.vel.z) * steer;
+      desiredYaw = Math.atan2(wz, wx);
 
-      // Limit speed
-      const speed = this.vel.length();
-      if (speed > sp.speed * 1.5) this.vel.multiplyScalar(sp.speed * 1.5 / speed);
+      const hDist = Math.sqrt(wx * wx + wz * wz);
+      const rawPitch = Math.atan2(wy, Math.max(hDist, 0.001));
+      desiredPitch = Math.max(-Math.PI / 6, Math.min(Math.PI / 6, rawPitch));
     }
+
+    // --- Gradually turn heading toward desired yaw (max turn rate) ---
+    let yawDiff = desiredYaw - this.heading;
+    if (yawDiff >  Math.PI) yawDiff -= Math.PI * 2;
+    if (yawDiff < -Math.PI) yawDiff += Math.PI * 2;
+
+    const maxTurn = sp.turnSpeed * 2 * delta;
+    this.heading += Math.sign(yawDiff) * Math.min(Math.abs(yawDiff), maxTurn);
+    if (this.heading >  Math.PI) this.heading -= Math.PI * 2;
+    if (this.heading < -Math.PI) this.heading += Math.PI * 2;
+
+    // Smooth pitch
+    this.pitch += (desiredPitch - this.pitch) * Math.min(1, sp.turnSpeed * delta * 2);
+
+    // --- Smooth speed, slow down during sharp turns ---
+    const turnSharpness = Math.abs(yawDiff) / Math.PI;
+    const turnBrake = 1 - turnSharpness * 0.4;
+    this.currentSpeed += (desiredSpeed * turnBrake - this.currentSpeed) * Math.min(1, 3 * delta);
+
+    // --- Velocity always follows heading (never backwards) ---
+    const cp = Math.cos(this.pitch);
+    this.vel.x = Math.cos(this.heading) * cp * this.currentSpeed;
+    this.vel.z = Math.sin(this.heading) * cp * this.currentSpeed;
+    this.vel.y = Math.sin(this.pitch)       * this.currentSpeed;
 
     // Move
     pos.x += this.vel.x * delta;
@@ -106,30 +123,19 @@ export class FishEntity {
     pos.z += this.vel.z * delta;
     clampToBounds(pos);
 
-    // --- Orientation: yaw + clamped pitch, never roll ---
-    const hx = this.vel.x, hy = this.vel.y, hz = this.vel.z;
-    const hSpeed = Math.sqrt(hx * hx + hz * hz);
-    const speed  = Math.sqrt(hx * hx + hy * hy + hz * hz);
-
+    // --- Orientation follows heading directly ---
+    const speed = this.currentSpeed;
     if (speed > 0.05) {
-      // Yaw: angle of horizontal velocity from +X axis (fish nose is at +X)
-      const yaw = Math.atan2(hz, hx);
-
-      // Pitch: elevation angle, hard-clamped to ±30° — prevents any flipping
-      const rawPitch = Math.atan2(hy, Math.max(hSpeed, 0.001));
-      const pitch = Math.max(-Math.PI / 6, Math.min(Math.PI / 6, rawPitch));
-
-      // Build quaternion: apply pitchQ first (tilts nose), then yawQ (faces direction)
-      _yawQ.setFromAxisAngle(_up,    yaw);
-      _pitchQ.setFromAxisAngle(_zAxis, pitch);
+      _yawQ.setFromAxisAngle(_up, this.heading);
+      _pitchQ.setFromAxisAngle(_zAxis, this.pitch);
       _quat.copy(_yawQ).multiply(_pitchQ);
-      this.group.quaternion.slerp(_quat, sp.turnSpeed * delta * 3);
+      this.group.quaternion.slerp(_quat, Math.min(1, 8 * delta));
     }
 
     // --- Tail fin animation ---
     if (this.tailPivot) {
       const swimFactor = Math.min(speed / sp.speed, 1.5);
-      const freq = 2 + swimFactor * 5.3;  // idle ~2 Hz, max ~10
+      const freq = 2 + swimFactor * 5.3;
       const amp  = 0.08 + swimFactor * 0.3;
       this.tailPivot.rotation.y = Math.sin(time * freq + this._phase) * amp;
     }
