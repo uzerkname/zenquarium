@@ -193,6 +193,22 @@
     .card-btn.remove { color: #e57373; border-color: rgba(229, 115, 115, 0.15); }
     .card-btn.remove:hover { background: rgba(229, 115, 115, 0.12); }
 
+    .clear-btn {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 6px 0;
+      background: rgba(229, 115, 115, 0.08);
+      border: 1px solid rgba(229, 115, 115, 0.2);
+      border-radius: 6px;
+      color: #e57373;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .clear-btn:hover { background: rgba(229, 115, 115, 0.18); }
+
     /* ── Mode Bar ──────────────────────────────────────── */
     #mode-bar {
       display: none !important; /* hidden for now — was display:flex */
@@ -264,6 +280,40 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     }
     #placement-hint.visible { display: block; }
+
+    #confirm-place {
+      display: none;
+      position: absolute;
+      background: rgba(129, 199, 132, 0.15);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(129, 199, 132, 0.4);
+      border-radius: 16px;
+      cursor: pointer;
+      pointer-events: all;
+      z-index: 100;
+      padding: 5px 14px;
+      transform: translate(-50%, 0);
+      transition: background 0.15s, border-color 0.15s;
+      color: #81c784;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: inherit;
+    }
+    #confirm-place:hover {
+      background: rgba(129, 199, 132, 0.3);
+      border-color: rgba(129, 199, 132, 0.7);
+    }
+    #confirm-place.visible { display: flex; align-items: center; gap: 5px; }
+    #confirm-place svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: #81c784;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
     /* ── Light Controls ────────────────────────────────── */
     #light-control {
@@ -373,7 +423,8 @@
     <div id="sidebar-left" class="panel"></div>
     <div id="sidebar-right" class="panel"></div>
     <div id="mode-bar"></div>
-    <div id="placement-hint">Click to place &middot; Right-click to rotate &middot; Esc to cancel</div>
+    <div id="placement-hint">Click to place &middot; Esc to cancel</div>
+    <button id="confirm-place"><svg viewBox="0 0 16 16"><path d="M3 8 L7 12 L13 4"/></svg>Place</button>
     <div id="light-control">
       <span class="light-label">Lights</span>
       <div class="color-presets">

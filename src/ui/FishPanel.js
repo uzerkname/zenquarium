@@ -28,11 +28,13 @@ export class FishPanel {
   }
 
   _render() {
+    const totalFish = Object.values(this._inTank).reduce((s, a) => s + a.length, 0);
     this.container.innerHTML = `
       <div class="panel-title">Fish</div>
       <div class="card-grid">
         ${SPECIES.map(s => this._card(s)).join('')}
-      </div>`;
+      </div>
+      ${totalFish > 0 ? `<button class="clear-btn" data-clear-fish>Clear All Fish</button>` : ''}`;
 
     // Insert pre-rendered canvas thumbnails into placeholders
     for (const s of SPECIES) {
@@ -53,6 +55,9 @@ export class FishPanel {
         if (ids.length) this.gameState.removeFish(ids[ids.length - 1]);
       });
     }
+
+    this.container.querySelector('[data-clear-fish]')
+      ?.addEventListener('click', () => this.gameState.clearAllFish());
   }
 
   _card(species) {

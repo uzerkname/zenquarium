@@ -28,25 +28,34 @@ export class DecorationEntity {
     const voxels = upscaleAndSmooth(type.voxels, DECO_UPSCALE);
     const voxelSize = 0.5;
 
+    let content;
     if (this.isAnimated) {
-      const { group, segments } = buildSwayGroup(voxels, 4, voxelSize);
-      this.group = group;
-      this._segments = segments;
+      const result = buildSwayGroup(voxels, 4, voxelSize);
+      content = result.group;
+      this._segments = result.segments;
     } else if (this.isChest) {
-      const { group, lidPivot } = buildChestGroup(
+      const result = buildChestGroup(
         voxels, CHEST_LID_Y, CHEST_HINGE_Y, CHEST_HINGE_Z, voxelSize
       );
-      this.group = group;
-      this._lidPivot = lidPivot;
+      content = result.group;
+      this._lidPivot = result.lidPivot;
       this._chestState = 0; // 0=closed, 1=opening, 2=open, 3=closing
       this._chestTimer = 3 + Math.random() * 5;
       this._lidAngle = 0;
-      lidPivot.rotation.x = 0;
-      this._initBubbles();
+      result.lidPivot.rotation.x = 0;
     } else {
-      this.group = buildVoxelGroup(voxels, voxelSize);
+      content = buildVoxelGroup(voxels, voxelSize);
     }
 
+    // Center content at group origin so rotation pivots correctly
+    const box = new THREE.Box3().setFromObject(content);
+    const cx = (box.min.x + box.max.x) / 2;
+    const cz = (box.min.z + box.max.z) / 2;
+    content.position.set(-cx, 0, -cz);
+    this._content = content;
+
+    this.group = new THREE.Group();
+    this.group.add(content);
     this.group.scale.setScalar(DECO_SCALE);
 
     this.group.traverse(child => {
@@ -56,14 +65,14 @@ export class DecorationEntity {
       }
     });
 
-    const ox = -(type.footprint.w - 1) / 2;
-    const oz = -(type.footprint.d - 1) / 2;
     this.group.position.set(
-      position.x + ox * DECO_SCALE,
+      position.x + cx * DECO_SCALE,
       -TANK_HEIGHT / 2 + SAND_HEIGHT,
-      position.z + oz * DECO_SCALE
+      position.z + cz * DECO_SCALE
     );
     this.group.rotation.y = rotY;
+
+    if (this.isChest) this._initBubbles();
   }
 
   /* ── Bubble pool for chest ── */
@@ -81,7 +90,7 @@ export class DecorationEntity {
     for (let i = 0; i < 8; i++) {
       const mesh = new THREE.Mesh(geo, baseMat.clone());
       mesh.visible = false;
-      this.group.add(mesh);
+      this._content.add(mesh);
       this._bubbles.push({
         mesh, active: false, vy: 0, vx: 0, vz: 0,
         life: 0, maxLife: 0, baseScale: 1,

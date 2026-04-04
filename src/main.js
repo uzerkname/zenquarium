@@ -42,7 +42,7 @@ lighting.setSandUniforms(tank._sandUniforms);
 // UI
 new HUD(gameState);
 new FishPanel(gameState,   document.getElementById('sidebar-left'));
-new DecorationPanel(placement, document.getElementById('sidebar-right'));
+new DecorationPanel(placement, gameState, document.getElementById('sidebar-right'));
 new ModePanel(gameState,   document.getElementById('mode-bar'));
 
 // --- Light color controls ---

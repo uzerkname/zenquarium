@@ -24,6 +24,10 @@ export class GameState {
     eventBus.emit('fish:removed', data);
   }
 
+  clearAllFish() {
+    for (const id of [...this.fish.keys()]) this.removeFish(id);
+  }
+
   addDecoration(typeKey, position, rotY = 0) {
     const id = _nextId++;
     const data = { id, typeKey, position: { ...position }, rotY };
@@ -37,6 +41,10 @@ export class GameState {
     const data = this.decorations.get(id);
     this.decorations.delete(id);
     eventBus.emit('deco:removed', data);
+  }
+
+  clearAllDecorations() {
+    for (const id of [...this.decorations.keys()]) this.removeDecoration(id);
   }
 
   setMode(mode) {
